@@ -1,0 +1,430 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+  VENDOR
+}
+
+enum VendorStatus {
+  ACTIVE
+  INACTIVE
+  PENDING
+  SUSPENDED
+}
+
+enum ProductAvailability {
+  IN_STOCK
+  OUT_OF_STOCK
+  LOW_STOCK
+  DISCONTINUED
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum PayoutStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id              String   @id @default(cuid())
+  name            String
+  email           String   @unique
+  phone           String
+  dateOfBirth     DateTime?
+  gender          String?
+  address         String
+  city            String
+  state           String
+  zipCode         String
+  country         String
+  status          UserStatus @default(ACTIVE)
+  role            UserRole @default(CUSTOMER)
+  marketingConsent Boolean @default(false)
+  password        String?
+  refreshToken    String?
+  googleId        String?  @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  orders          Order[]
+  reviews         Review[]
+  passwordResetTokens PasswordResetToken[]
+  wishlistItems   WishlistItem[]
+  emailVerificationTokens EmailVerificationToken[]
+  notifications   Notification[]
+  cartItems       CartItem[]
+  savedItems      SavedItem[]
+  emailVerified   Boolean @default(false)
+
+  @@map("users")
+}
+
+model Vendor {
+  id            String       @id @default(cuid())
+  name          String
+  email         String       @unique
+  phone         String
+  website       String?
+  address       String
+  city          String
+  state         String
+  zipCode       String
+  country       String
+  description   String?
+  businessType  String?
+  taxId         String?
+  isVerified    Boolean      @default(false)
+  status        VendorStatus @default(PENDING)
+  rating        Float        @default(0)
+  reviewCount   Int          @default(0)
+  logo          String?
+  location      String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  // Relations
+  products      Product[]
+  vendorOrders  VendorOrder[]
+  payouts       VendorPayout[]
+  commission    VendorCommission?
+
+  @@map("vendors")
+}
+
+model Category {
+  id              String   @id @default(cuid())
+  name            String
+  description     String?
+  slug            String   @unique
+  image           String?
+  metaTitle       String?
+  metaDescription String?
+  isActive        Boolean  @default(true)
+  isFeatured      Boolean  @default(false)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  products        Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id              String              @id @default(cuid())
+  name            String
+  description     String
+  price           Float
+  originalPrice   Float?
+  brand           String
+  images          Json?
+  specifications  Json?
+  availability    ProductAvailability @default(IN_STOCK)
+  stockQuantity   Int                 @default(0)
+  isActive        Boolean             @default(true)
+  isFeatured      Boolean             @default(false)
+  rating          Float               @default(0)
+  reviewCount     Int                 @default(0)
+  soldCount       Int                 @default(0)
+  sku             String?
+  weight          Float?
+  dimensions      String?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  // Relations
+  vendorId        String
+  vendor          Vendor              @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  categoryId      String
+  category        Category            @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  orderItems      OrderItem[]
+  reviews         Review[]
+  wishlistItems   WishlistItem[]
+  cartItems       CartItem[]
+  savedItems      SavedItem[]
+
+  @@map("products")
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  orderNumber     String        @unique
+  status          OrderStatus   @default(PENDING)
+  paymentStatus   PaymentStatus @default(PENDING)
+  paymentMethod   String
+  shippingMethod  String
+  shippingCost    Float         @default(0)
+  subtotal        Float
+  tax             Float
+  total           Float
+  shippingAddress Json
+  trackingNumber  String?
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items           OrderItem[]
+  vendorOrders    VendorOrder[]
+  paymentTransactions PaymentTransaction[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  quantity  Int
+  price     Float
+  sku       String?
+
+  // Relations
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  vendorOrderId String?
+  vendorOrder   VendorOrder? @relation(fields: [vendorOrderId], references: [id], onDelete: SetNull)
+
+  @@map("order_items")
+}
+
+// Per-vendor sub-order created from a parent order for fulfillment, settlement, and payouts
+model VendorOrder {
+  id               String        @id @default(cuid())
+  status           OrderStatus   @default(PENDING)
+  paymentStatus    PaymentStatus @default(PENDING)
+  subtotal         Float         @default(0)
+  tax              Float         @default(0)
+  shippingCost     Float         @default(0)
+  total            Float         @default(0)
+  commissionRate   Float         @default(0) // e.g., 0.1 for 10%
+  commissionAmount Float         @default(0)
+  vendorEarnings   Float         @default(0)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  // Relations
+  orderId          String
+  order            Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  vendorId         String
+  vendor           Vendor        @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  items            OrderItem[]
+  transactions     PaymentTransaction[]
+
+  @@map("vendor_orders")
+}
+
+// Commission configuration (global override stored elsewhere; this is per-vendor)
+model VendorCommission {
+  id         String   @id @default(cuid())
+  rate       Float    @default(0) // 0.1 = 10%
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  vendorId   String   @unique
+  vendor     Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@map("vendor_commissions")
+}
+
+// Records provider transactions for orders and vendor sub-orders
+model PaymentTransaction {
+  id             String         @id @default(cuid())
+  provider       String
+  reference      String         @unique
+  amount         Float
+  currency       String         @default("USD")
+  status         PaymentStatus  @default(PENDING)
+  raw            Json?
+  createdAt      DateTime       @default(now())
+
+  // Relations
+  orderId        String?
+  order          Order?         @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  vendorOrderId  String?
+  vendorOrder    VendorOrder?   @relation(fields: [vendorOrderId], references: [id], onDelete: SetNull)
+
+  @@map("payment_transactions")
+}
+
+// Vendor payout requests and settlements
+model VendorPayout {
+  id           String       @id @default(cuid())
+  amount       Float
+  currency     String       @default("USD")
+  status       PayoutStatus @default(PENDING)
+  requestedAt  DateTime     @default(now())
+  paidAt       DateTime?
+  note         String?
+  reference    String?
+
+  // Relations
+  vendorId     String
+  vendor       Vendor       @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@map("vendor_payouts")
+}
+
+// Global application configuration (single row expected)
+model AppConfig {
+  id              String   @id @default(cuid())
+  commissionRate  Float    @default(0.1)  // Default 10%
+  taxRate         Float    @default(0.15) // Default 15% VAT/sales tax
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("app_config")
+}
+
+model Review {
+  id        String       @id @default(cuid())
+  comment   String
+  rating    Int
+  status    ReviewStatus @default(PENDING)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  // Relations
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@map("wishlist_items")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_reset_tokens")
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("email_verification_tokens")
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  title       String
+  message     String
+  type        String   // 'order', 'promotion', 'system', 'vendor'
+  data        Json?    // Additional data for the notification
+  isRead      Boolean  @default(false)
+  isPush      Boolean  @default(false) // Whether this was sent as push notification
+  scheduledAt DateTime? // For scheduled notifications
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@map("cart_items")
+}
+
+model SavedItem {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@map("saved_items")
+}

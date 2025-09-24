@@ -1,0 +1,62 @@
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request } from '@nestjs/common';
+import { OrdersService } from '../services/orders.service';
+import { CreateOrderDto } from '../dto/create-order.dto';
+import { UpdateOrderDto } from '../dto/update-order.dto';
+
+@Controller('orders')
+export class OrdersController {
+  constructor(private readonly ordersService: OrdersService) {}
+
+  @Post()
+  create(@Body() createOrderDto: CreateOrderDto) {
+    return this.ordersService.create(createOrderDto);
+  }
+
+  @Get()
+  findAll() {
+    return this.ordersService.findAll();
+  }
+
+  @Get('stats')
+  getStats() {
+    return this.ordersService.getOrdersStats();
+  }
+
+  @Get('revenue-trends')
+  getRevenueTrends() {
+    return this.ordersService.getRevenueTrends();
+  }
+
+  @Get('sales-by-category')
+  getSalesByCategory() {
+    return this.ordersService.getSalesByCategory();
+  }
+
+  @Get('user')
+  getUserOrders(@Request() req: any) {
+    // Get userId from authenticated request or query parameter for development
+    const userId = req.user?.id || req.query?.userId;
+    
+    if (userId) {
+      return this.ordersService.findUserOrders(userId);
+    }
+    
+    // Fallback to all orders if no user ID is provided
+    return this.ordersService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.ordersService.findOne(id);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
+    return this.ordersService.update(id, updateOrderDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.ordersService.remove(id);
+  }
+}

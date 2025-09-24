@@ -1,0 +1,14 @@
+import { ValidationOptions } from 'class-validator';
+export declare function IsSanitizedString(validationOptions?: ValidationOptions): (object: any, propertyName: string) => void;
+export declare function IsSanitizedHtml(validationOptions?: ValidationOptions): (object: any, propertyName: string) => void;
+export declare function IsSanitizedEmail(validationOptions?: ValidationOptions): (object: any, propertyName: string) => void;
+export declare function IsSanitizedUrl(validationOptions?: ValidationOptions): (object: any, propertyName: string) => void;
+export declare function IsSanitizedPhone(validationOptions?: ValidationOptions): (object: any, propertyName: string) => void;
+export declare function IsSanitizedNumber(validationOptions?: ValidationOptions): (object: any, propertyName: string) => void;
+export declare function IsSanitizedBoolean(validationOptions?: ValidationOptions): (object: any, propertyName: string) => void;
+export declare function IsStringLength(min: number, max: number, validationOptions?: ValidationOptions): (object: any, propertyName: string) => void;
+export declare function IsAlphanumericWithSymbols(allowedSymbols?: string[], validationOptions?: ValidationOptions): (object: any, propertyName: string) => void;
+export declare function IsStrongPassword(validationOptions?: ValidationOptions): (object: any, propertyName: string) => void;
+export declare function IsValidEnum(enumObject: any, validationOptions?: ValidationOptions): (object: any, propertyName: string) => void;
+export declare function IsArrayLength(min: number, max: number, validationOptions?: ValidationOptions): (object: any, propertyName: string) => void;
+export declare function IsOptionalSanitizedString(validationOptions?: ValidationOptions): (object: any, propertyName: string) => void;
