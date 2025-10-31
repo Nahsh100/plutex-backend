@@ -49,11 +49,24 @@ async function bootstrap() {
   app.use(urlencoded({ extended: true, limit: '50mb' }));
 
   // Enable CORS
+  const defaultOrigins = [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:8083',
+    'http://localhost:19006',
+    'https://plutex-admin-production.up.railway.app',
+  ];
+  const envOrigins = process.env.CORS_ORIGINS || process.env.CORS_ORIGIN || '';
+  const parsedEnvOrigins = envOrigins
+    ? envOrigins.split(',').map(o => o.trim()).filter(Boolean)
+    : [];
+  const allowedOrigins = parsedEnvOrigins.length > 0 ? parsedEnvOrigins : defaultOrigins;
+
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:8083', 'http://localhost:19006'],
+    origin: allowedOrigins,
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   });
 
   // Global exception filter
@@ -76,7 +89,7 @@ async function bootstrap() {
   
   console.log(`🚀 Plutex Backend is running on: http://localhost:${port}`);
   console.log(`📚 API Documentation: http://localhost:${port}/api`);
-  console.log(`🌐 CORS enabled for: ${process.env.CORS_ORIGIN || 'http://localhost:3000'}`);
+  console.log(`🌐 CORS enabled for: ${allowedOrigins.join(', ')}`);
   console.log(`🗄️  Database URL: ${process.env.DATABASE_URL || 'file:./dev.db (SQLite)'}`);
   
   // Log database connection details
