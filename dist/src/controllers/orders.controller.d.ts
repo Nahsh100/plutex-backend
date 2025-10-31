@@ -31,11 +31,11 @@ export declare class OrdersController {
             };
             items: {
                 id: string;
+                productId: string;
                 price: number;
                 sku: string | null;
                 quantity: number;
                 orderId: string;
-                productId: string;
                 vendorOrderId: string | null;
             }[];
         } & {
@@ -48,11 +48,11 @@ export declare class OrdersController {
             shippingCost: number;
             subtotal: number;
             tax: number;
+            paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
             vendorId: string;
             orderId: string;
             vendorEarnings: number;
             commissionAmount: number;
-            paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
         })[];
         user: {
             id: string;
@@ -103,11 +103,11 @@ export declare class OrdersController {
             };
         } & {
             id: string;
+            productId: string;
             price: number;
             sku: string | null;
             quantity: number;
             orderId: string;
-            productId: string;
             vendorOrderId: string | null;
         })[];
     } & {
@@ -178,11 +178,11 @@ export declare class OrdersController {
             };
         } & {
             id: string;
+            productId: string;
             price: number;
             sku: string | null;
             quantity: number;
             orderId: string;
-            productId: string;
             vendorOrderId: string | null;
         })[];
     } & {
@@ -266,11 +266,11 @@ export declare class OrdersController {
             };
         } & {
             id: string;
+            productId: string;
             price: number;
             sku: string | null;
             quantity: number;
             orderId: string;
-            productId: string;
             vendorOrderId: string | null;
         })[];
     } & {
@@ -341,11 +341,11 @@ export declare class OrdersController {
             };
         } & {
             id: string;
+            productId: string;
             price: number;
             sku: string | null;
             quantity: number;
             orderId: string;
-            productId: string;
             vendorOrderId: string | null;
         })[];
     } & {
@@ -416,11 +416,11 @@ export declare class OrdersController {
             };
         } & {
             id: string;
+            productId: string;
             price: number;
             sku: string | null;
             quantity: number;
             orderId: string;
-            productId: string;
             vendorOrderId: string | null;
         })[];
     } & {

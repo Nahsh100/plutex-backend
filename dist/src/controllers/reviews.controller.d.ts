@@ -21,9 +21,9 @@ export declare class ReviewsController {
         updatedAt: Date;
         status: import(".prisma/client").$Enums.ReviewStatus;
         rating: number;
-        productId: string;
         userId: string;
         comment: string;
+        productId: string;
     }>;
     findAll(productId?: string, status?: string, page?: string, limit?: string): Promise<{
         reviews: ({
@@ -43,9 +43,9 @@ export declare class ReviewsController {
             updatedAt: Date;
             status: import(".prisma/client").$Enums.ReviewStatus;
             rating: number;
-            productId: string;
             userId: string;
             comment: string;
+            productId: string;
         })[];
         pagination: {
             page: number;
@@ -72,9 +72,9 @@ export declare class ReviewsController {
             updatedAt: Date;
             status: import(".prisma/client").$Enums.ReviewStatus;
             rating: number;
-            productId: string;
             userId: string;
             comment: string;
+            productId: string;
         })[];
         pagination: {
             page: number;
@@ -96,9 +96,9 @@ export declare class ReviewsController {
             updatedAt: Date;
             status: import(".prisma/client").$Enums.ReviewStatus;
             rating: number;
-            productId: string;
             userId: string;
             comment: string;
+            productId: string;
         })[];
         pagination: {
             page: number;
@@ -124,9 +124,9 @@ export declare class ReviewsController {
         updatedAt: Date;
         status: import(".prisma/client").$Enums.ReviewStatus;
         rating: number;
-        productId: string;
         userId: string;
         comment: string;
+        productId: string;
     }>;
     update(id: string, updateReviewDto: UpdateReviewDto, req: any): Promise<{
         user: {
@@ -145,9 +145,9 @@ export declare class ReviewsController {
         updatedAt: Date;
         status: import(".prisma/client").$Enums.ReviewStatus;
         rating: number;
-        productId: string;
         userId: string;
         comment: string;
+        productId: string;
     }>;
     remove(id: string, req: any): Promise<{
         message: string;
@@ -169,8 +169,8 @@ export declare class ReviewsController {
         updatedAt: Date;
         status: import(".prisma/client").$Enums.ReviewStatus;
         rating: number;
-        productId: string;
         userId: string;
         comment: string;
+        productId: string;
     }>;
 }

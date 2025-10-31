@@ -264,11 +264,11 @@ export declare class VendorsService {
                 };
             } & {
                 id: string;
+                productId: string;
                 price: number;
                 sku: string | null;
                 quantity: number;
                 orderId: string;
-                productId: string;
                 vendorOrderId: string | null;
             })[];
         } & {
@@ -316,11 +316,11 @@ export declare class VendorsService {
             };
         } & {
             id: string;
+            productId: string;
             price: number;
             sku: string | null;
             quantity: number;
             orderId: string;
-            productId: string;
             vendorOrderId: string | null;
         })[];
     } & {
@@ -333,11 +333,11 @@ export declare class VendorsService {
         shippingCost: number;
         subtotal: number;
         tax: number;
+        paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
         vendorId: string;
         orderId: string;
         vendorEarnings: number;
         commissionAmount: number;
-        paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
     })[]>;
     getVendorRevenueStats(vendorId: string): Promise<{
         month: string;

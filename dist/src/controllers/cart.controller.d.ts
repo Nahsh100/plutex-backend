@@ -72,9 +72,9 @@ export declare class CartController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            quantity: number;
-            productId: string;
             userId: string;
+            productId: string;
+            quantity: number;
         })[];
         savedItems: ({
             product: {
@@ -142,8 +142,8 @@ export declare class CartController {
         } & {
             id: string;
             createdAt: Date;
-            productId: string;
             userId: string;
+            productId: string;
         })[];
     }>;
     getCartSummary(req: any): Promise<{
@@ -218,9 +218,9 @@ export declare class CartController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        quantity: number;
-        productId: string;
         userId: string;
+        productId: string;
+        quantity: number;
     }>;
     updateCartItem(req: any, itemId: string, updateCartItemDto: UpdateCartItemDto): Promise<{
         product: {
@@ -289,9 +289,9 @@ export declare class CartController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        quantity: number;
-        productId: string;
         userId: string;
+        productId: string;
+        quantity: number;
     }>;
     removeFromCart(req: any, itemId: string): Promise<{
         message: string;
@@ -366,9 +366,9 @@ export declare class CartController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        quantity: number;
-        productId: string;
         userId: string;
+        productId: string;
+        quantity: number;
     }>;
     removeSaved(req: any, productId: string): Promise<{
         message: string;

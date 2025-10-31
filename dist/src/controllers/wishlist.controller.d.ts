@@ -30,8 +30,8 @@ export declare class WishlistController {
     } & {
         id: string;
         createdAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
     })[]>;
     add(req: any, productId: string): Promise<{
         product: {
@@ -61,8 +61,8 @@ export declare class WishlistController {
     } & {
         id: string;
         createdAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
     }>;
     remove(req: any, productId: string): Promise<{
         success: boolean;

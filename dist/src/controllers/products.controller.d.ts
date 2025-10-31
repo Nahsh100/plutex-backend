@@ -48,9 +48,9 @@ export declare class ProductsController {
             updatedAt: Date;
             status: import(".prisma/client").$Enums.ReviewStatus;
             rating: number;
-            productId: string;
             userId: string;
             comment: string;
+            productId: string;
         }[];
     } & {
         id: string;
@@ -120,9 +120,9 @@ export declare class ProductsController {
             updatedAt: Date;
             status: import(".prisma/client").$Enums.ReviewStatus;
             rating: number;
-            productId: string;
             userId: string;
             comment: string;
+            productId: string;
         }[];
     } & {
         id: string;
@@ -257,11 +257,11 @@ export declare class ProductsController {
         };
         orderItems: {
             id: string;
+            productId: string;
             price: number;
             sku: string | null;
             quantity: number;
             orderId: string;
-            productId: string;
             vendorOrderId: string | null;
         }[];
         id: string;
@@ -330,17 +330,17 @@ export declare class ProductsController {
             updatedAt: Date;
             status: import(".prisma/client").$Enums.ReviewStatus;
             rating: number;
-            productId: string;
             userId: string;
             comment: string;
+            productId: string;
         }[];
         orderItems: {
             id: string;
+            productId: string;
             price: number;
             sku: string | null;
             quantity: number;
             orderId: string;
-            productId: string;
             vendorOrderId: string | null;
         }[];
     } & {
@@ -411,9 +411,9 @@ export declare class ProductsController {
             updatedAt: Date;
             status: import(".prisma/client").$Enums.ReviewStatus;
             rating: number;
-            productId: string;
             userId: string;
             comment: string;
+            productId: string;
         }[];
     } & {
         id: string;

@@ -118,9 +118,9 @@ export declare class UsersController {
             updatedAt: Date;
             status: import(".prisma/client").$Enums.ReviewStatus;
             rating: number;
-            productId: string;
             userId: string;
             comment: string;
+            productId: string;
         }[];
     } & {
         id: string;
@@ -169,9 +169,9 @@ export declare class UsersController {
             updatedAt: Date;
             status: import(".prisma/client").$Enums.ReviewStatus;
             rating: number;
-            productId: string;
             userId: string;
             comment: string;
+            productId: string;
         }[];
     } & {
         id: string;

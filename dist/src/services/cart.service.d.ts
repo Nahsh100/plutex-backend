@@ -72,9 +72,9 @@ export declare class CartService {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            quantity: number;
-            productId: string;
             userId: string;
+            productId: string;
+            quantity: number;
         })[];
         savedItems: ({
             product: {
@@ -142,8 +142,8 @@ export declare class CartService {
         } & {
             id: string;
             createdAt: Date;
-            productId: string;
             userId: string;
+            productId: string;
         })[];
     }>;
     addToCart(userId: string, addToCartDto: AddToCartDto): Promise<{
@@ -213,9 +213,9 @@ export declare class CartService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        quantity: number;
-        productId: string;
         userId: string;
+        productId: string;
+        quantity: number;
     }>;
     updateCartItem(userId: string, itemId: string, updateCartItemDto: UpdateCartItemDto): Promise<{
         product: {
@@ -284,9 +284,9 @@ export declare class CartService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        quantity: number;
-        productId: string;
         userId: string;
+        productId: string;
+        quantity: number;
     }>;
     removeFromCart(userId: string, itemId: string): Promise<{
         message: string;
@@ -361,9 +361,9 @@ export declare class CartService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        quantity: number;
-        productId: string;
         userId: string;
+        productId: string;
+        quantity: number;
     }>;
     removeSaved(userId: string, productId: string): Promise<{
         message: string;
