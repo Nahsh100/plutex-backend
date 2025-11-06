@@ -48,25 +48,46 @@ async function bootstrap() {
   app.use(json({ limit: '50mb' }));
   app.use(urlencoded({ extended: true, limit: '50mb' }));
 
-  // Enable CORS
+  // Enable CORS with explicit preflight handling
   const defaultOrigins = [
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:8083',
     'http://localhost:19006',
     'https://plutex-admin-production.up.railway.app',
+    'https://plutex-admin-production.up.railway.app/*', // Allow all paths on this domain
   ];
+
+  // Check for production environment specific origins
   const envOrigins = process.env.CORS_ORIGINS || process.env.CORS_ORIGIN || '';
   const parsedEnvOrigins = envOrigins
     ? envOrigins.split(',').map(o => o.trim()).filter(Boolean)
     : [];
   const allowedOrigins = parsedEnvOrigins.length > 0 ? parsedEnvOrigins : defaultOrigins;
 
+  // Use dynamic origin function for more flexible CORS handling
   app.enableCors({
-    origin: allowedOrigins,
+    origin: (origin: string | undefined, callback: (error: Error | null, origin?: boolean) => void) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      
+      // In development, allow all origins
+      if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) {
+        return callback(null, true);
+      }
+      
+      // In production, check against allowed origins
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
     methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   });
 
   // Global exception filter

@@ -37,11 +37,38 @@ async function bootstrap() {
     });
     app.use((0, express_1.json)({ limit: '50mb' }));
     app.use((0, express_1.urlencoded)({ extended: true, limit: '50mb' }));
+    const defaultOrigins = [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:8083',
+        'http://localhost:19006',
+        'https://plutex-admin-production.up.railway.app',
+        'https://plutex-admin-production.up.railway.app/*',
+    ];
+    const envOrigins = process.env.CORS_ORIGINS || process.env.CORS_ORIGIN || '';
+    const parsedEnvOrigins = envOrigins
+        ? envOrigins.split(',').map(o => o.trim()).filter(Boolean)
+        : [];
+    const allowedOrigins = parsedEnvOrigins.length > 0 ? parsedEnvOrigins : defaultOrigins;
     app.enableCors({
-        origin: process.env.CORS_ORIGIN || ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:8083', 'http://localhost:19006'],
+        origin: (origin, callback) => {
+            if (!origin)
+                return callback(null, true);
+            if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) {
+                return callback(null, true);
+            }
+            if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+                callback(null, true);
+            }
+            else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
         credentials: true,
-        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-        allowedHeaders: ['Content-Type', 'Authorization'],
+        methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+        preflightContinue: false,
+        optionsSuccessStatus: 204,
     });
     app.useGlobalFilters(new global_exception_filter_1.GlobalExceptionFilter());
     app.useGlobalPipes(new common_1.ValidationPipe({
@@ -56,7 +83,7 @@ async function bootstrap() {
     await app.listen(port);
     console.log(`🚀 Plutex Backend is running on: http://localhost:${port}`);
     console.log(`📚 API Documentation: http://localhost:${port}/api`);
-    console.log(`🌐 CORS enabled for: ${process.env.CORS_ORIGIN || 'http://localhost:3000'}`);
+    console.log(`🌐 CORS enabled for: ${allowedOrigins.join(', ')}`);
     console.log(`🗄️  Database URL: ${process.env.DATABASE_URL || 'file:./dev.db (SQLite)'}`);
     if (process.env.DATABASE_URL) {
         const dbUrl = process.env.DATABASE_URL;
