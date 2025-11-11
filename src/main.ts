@@ -55,10 +55,10 @@ async function bootstrap() {
     'http://localhost:8083',
     'http://localhost:19006',
     'https://plutex-admin-production.up.railway.app',
-    'https://plutex-admin.vercel.app/*',
-    'https://plutex.co.zm/*',
-    'https://www.plutex.co.zm/*',
-    'https://plutex-admin-production.up.railway.app/*', // Allow all paths on this domain
+    'https://plutex-admin.vercel.app',
+    'https://plutex.co.zm',
+    'https://www.plutex.co.zm',
+    '*.plutex.co.zm', // Allow subdomains of plutex.co.zm
   ];
 
   // Check for production environment specific origins
@@ -80,7 +80,20 @@ async function bootstrap() {
       }
       
       // In production, check against allowed origins
-      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      const isAllowed = allowedOrigins.some(allowedOrigin => {
+        // Check for exact match
+        if (allowedOrigin === origin) {
+          return true;
+        }
+        // Check if allowedOrigin has wildcard pattern and origin matches
+        if (allowedOrigin.includes('*')) {
+          const regexPattern = new RegExp(allowedOrigin.replace(/\*/g, '.*'));
+          return regexPattern.test(origin);
+        }
+        return false;
+      });
+
+      if (isAllowed) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));

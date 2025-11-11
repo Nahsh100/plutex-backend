@@ -25,7 +25,7 @@ let OrdersService = class OrdersService {
         this.configService = configService;
     }
     async create(createOrderDto) {
-        const { items, ...orderData } = createOrderDto;
+        const { items, paymentProvider, paymentReference, paymentCurrency, paymentRawData, ...orderData } = createOrderDto;
         const order = await this.prisma.order.create({
             data: {
                 ...orderData,
@@ -42,6 +42,19 @@ let OrdersService = class OrdersService {
                 },
             },
         });
+        if (paymentProvider && paymentReference && paymentCurrency) {
+            await this.prisma.paymentTransaction.create({
+                data: {
+                    provider: paymentProvider,
+                    reference: paymentReference,
+                    amount: order.total,
+                    currency: paymentCurrency,
+                    status: order.paymentStatus,
+                    raw: paymentRawData || {},
+                    orderId: order.id,
+                },
+            });
+        }
         await this.createVendorOrdersForOrder(order.id);
         return this.prisma.order.findUnique({
             where: { id: order.id },

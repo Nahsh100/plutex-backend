@@ -8,11 +8,11 @@ export declare class PayoutsService {
         status: import(".prisma/client").$Enums.PayoutStatus;
         vendorId: string;
         amount: number;
+        reference: string | null;
         currency: string;
         requestedAt: Date;
         paidAt: Date | null;
         note: string | null;
-        reference: string | null;
     }[]>;
     listAllPayouts(status?: string): Promise<({
         vendor: {
@@ -43,33 +43,33 @@ export declare class PayoutsService {
         status: import(".prisma/client").$Enums.PayoutStatus;
         vendorId: string;
         amount: number;
+        reference: string | null;
         currency: string;
         requestedAt: Date;
         paidAt: Date | null;
         note: string | null;
-        reference: string | null;
     })[]>;
     requestPayout(vendorId: string, amount: number, currency?: string, note?: string): Promise<{
         id: string;
         status: import(".prisma/client").$Enums.PayoutStatus;
         vendorId: string;
         amount: number;
+        reference: string | null;
         currency: string;
         requestedAt: Date;
         paidAt: Date | null;
         note: string | null;
-        reference: string | null;
     }>;
     markPayoutPaid(payoutId: string, reference?: string): Promise<{
         id: string;
         status: import(".prisma/client").$Enums.PayoutStatus;
         vendorId: string;
         amount: number;
+        reference: string | null;
         currency: string;
         requestedAt: Date;
         paidAt: Date | null;
         note: string | null;
-        reference: string | null;
     }>;
     getVendorEarningsSummary(vendorId: string): Promise<{
         earned: number;

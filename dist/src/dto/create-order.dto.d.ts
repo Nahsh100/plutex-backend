@@ -38,4 +38,8 @@ export declare class CreateOrderDto {
     notes?: string;
     userId: string;
     items: CreateOrderItemDto[];
+    paymentProvider?: string;
+    paymentReference?: string;
+    paymentCurrency?: string;
+    paymentRawData?: any;
 }

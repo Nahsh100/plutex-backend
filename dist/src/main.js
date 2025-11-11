@@ -43,7 +43,10 @@ async function bootstrap() {
         'http://localhost:8083',
         'http://localhost:19006',
         'https://plutex-admin-production.up.railway.app',
-        'https://plutex-admin-production.up.railway.app/*',
+        'https://plutex-admin.vercel.app',
+        'https://plutex.co.zm',
+        'https://www.plutex.co.zm',
+        '*.plutex.co.zm',
     ];
     const envOrigins = process.env.CORS_ORIGINS || process.env.CORS_ORIGIN || '';
     const parsedEnvOrigins = envOrigins
@@ -57,7 +60,17 @@ async function bootstrap() {
             if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) {
                 return callback(null, true);
             }
-            if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            const isAllowed = allowedOrigins.some(allowedOrigin => {
+                if (allowedOrigin === origin) {
+                    return true;
+                }
+                if (allowedOrigin.includes('*')) {
+                    const regexPattern = new RegExp(allowedOrigin.replace(/\*/g, '.*'));
+                    return regexPattern.test(origin);
+                }
+                return false;
+            });
+            if (isAllowed) {
                 callback(null, true);
             }
             else {

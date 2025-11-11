@@ -7,11 +7,11 @@ export declare class PayoutsController {
         status: import(".prisma/client").$Enums.PayoutStatus;
         vendorId: string;
         amount: number;
+        reference: string | null;
         currency: string;
         requestedAt: Date;
         paidAt: Date | null;
         note: string | null;
-        reference: string | null;
     }[]>;
     requestPayout(req: any, body: {
         amount: number;
@@ -22,11 +22,11 @@ export declare class PayoutsController {
         status: import(".prisma/client").$Enums.PayoutStatus;
         vendorId: string;
         amount: number;
+        reference: string | null;
         currency: string;
         requestedAt: Date;
         paidAt: Date | null;
         note: string | null;
-        reference: string | null;
     }>;
     listAll(status?: string): Promise<({
         vendor: {
@@ -57,11 +57,11 @@ export declare class PayoutsController {
         status: import(".prisma/client").$Enums.PayoutStatus;
         vendorId: string;
         amount: number;
+        reference: string | null;
         currency: string;
         requestedAt: Date;
         paidAt: Date | null;
         note: string | null;
-        reference: string | null;
     })[]>;
     markPaid(id: string, body: {
         reference?: string;
@@ -70,11 +70,11 @@ export declare class PayoutsController {
         status: import(".prisma/client").$Enums.PayoutStatus;
         vendorId: string;
         amount: number;
+        reference: string | null;
         currency: string;
         requestedAt: Date;
         paidAt: Date | null;
         note: string | null;
-        reference: string | null;
     }>;
     mySummary(req: any): Promise<{
         earned: number;
