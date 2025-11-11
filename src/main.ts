@@ -55,6 +55,9 @@ async function bootstrap() {
     'http://localhost:8083',
     'http://localhost:19006',
     'https://plutex-admin-production.up.railway.app',
+    'https://plutex-admin.vercel.app/*',
+    'https://plutex.co.zm/*',
+    'https://www.plutex.co.zm/*',
     'https://plutex-admin-production.up.railway.app/*', // Allow all paths on this domain
   ];
 
