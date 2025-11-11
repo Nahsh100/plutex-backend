@@ -15,7 +15,7 @@ export class OrdersService {
   ) {}
 
   async create(createOrderDto: CreateOrderDto) {
-    const { items, ...orderData } = createOrderDto;
+    const { items, paymentProvider, paymentReference, paymentCurrency, paymentRawData, ...orderData } = createOrderDto;
     
     const order = await this.prisma.order.create({
       data: {
@@ -33,6 +33,21 @@ export class OrdersService {
         },
       },
     });
+
+    // Create PaymentTransaction record if details are provided
+    if (paymentProvider && paymentReference && paymentCurrency) {
+      await this.prisma.paymentTransaction.create({
+        data: {
+          provider: paymentProvider,
+          reference: paymentReference,
+          amount: order.total, // Use the order's total amount
+          currency: paymentCurrency,
+          status: order.paymentStatus, // Use the order's payment status
+          raw: paymentRawData || {},
+          orderId: order.id,
+        },
+      });
+    }
 
     // Create per-vendor sub-orders and compute commissions
     await this.createVendorOrdersForOrder(order.id);

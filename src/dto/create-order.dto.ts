@@ -83,4 +83,19 @@ export class CreateOrderDto {
 
   @IsArray()
   items: CreateOrderItemDto[];
+
+  @IsOptional()
+  @IsString()
+  paymentProvider?: string;
+
+  @IsOptional()
+  @IsString()
+  paymentReference?: string;
+
+  @IsOptional()
+  @IsString()
+  paymentCurrency?: string;
+
+  @IsOptional()
+  paymentRawData?: any; // Use any for Json type
 }
