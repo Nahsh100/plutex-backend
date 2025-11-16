@@ -73,8 +73,8 @@ model User {
   gender          String?
   address         String
   city            String
-  state           String
-  zipCode         String
+  state           String?
+  zipCode         String?
   country         String
   status          UserStatus @default(ACTIVE)
   role            UserRole @default(CUSTOMER)
@@ -107,8 +107,8 @@ model Vendor {
   website       String?
   address       String
   city          String
-  state         String
-  zipCode       String
+  state         String?
+  zipCode       String?
   country       String
   description   String?
   businessType  String?
