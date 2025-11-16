@@ -74,7 +74,8 @@ async function bootstrap() {
                 callback(null, true);
             }
             else {
-                callback(new Error('Not allowed by CORS'));
+                console.log(`CORS blocked origin: ${origin}`);
+                callback(null, false);
             }
         },
         credentials: true,

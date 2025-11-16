@@ -6,46 +6,46 @@ export declare class ReviewsService {
     constructor(prisma: PrismaService);
     create(createReviewDto: CreateReviewDto, userId: string): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
         product: {
-            id: string;
             name: string;
+            id: string;
             images: import("@prisma/client/runtime/library").JsonValue;
         };
     } & {
+        status: import(".prisma/client").$Enums.ReviewStatus;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        status: import(".prisma/client").$Enums.ReviewStatus;
         rating: number;
+        productId: string;
         userId: string;
         comment: string;
-        productId: string;
     }>;
     findAll(productId?: string, status?: string, page?: number, limit?: number): Promise<{
         reviews: ({
             user: {
-                id: string;
                 name: string;
                 email: string;
+                id: string;
             };
             product: {
-                id: string;
                 name: string;
+                id: string;
                 images: import("@prisma/client/runtime/library").JsonValue;
             };
         } & {
+            status: import(".prisma/client").$Enums.ReviewStatus;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            status: import(".prisma/client").$Enums.ReviewStatus;
             rating: number;
+            productId: string;
             userId: string;
             comment: string;
-            productId: string;
         })[];
         pagination: {
             page: number;
@@ -56,91 +56,91 @@ export declare class ReviewsService {
     }>;
     findOne(id: string): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
         product: {
-            id: string;
             name: string;
+            id: string;
             images: import("@prisma/client/runtime/library").JsonValue;
         };
     } & {
+        status: import(".prisma/client").$Enums.ReviewStatus;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        status: import(".prisma/client").$Enums.ReviewStatus;
         rating: number;
+        productId: string;
         userId: string;
         comment: string;
-        productId: string;
     }>;
     update(id: string, updateReviewDto: UpdateReviewDto, userId: string): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
         product: {
-            id: string;
             name: string;
+            id: string;
             images: import("@prisma/client/runtime/library").JsonValue;
         };
     } & {
+        status: import(".prisma/client").$Enums.ReviewStatus;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        status: import(".prisma/client").$Enums.ReviewStatus;
         rating: number;
+        productId: string;
         userId: string;
         comment: string;
-        productId: string;
     }>;
     remove(id: string, userId: string): Promise<{
         message: string;
     }>;
     updateStatus(id: string, status: string): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
         product: {
-            id: string;
             name: string;
+            id: string;
             images: import("@prisma/client/runtime/library").JsonValue;
         };
     } & {
+        status: import(".prisma/client").$Enums.ReviewStatus;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        status: import(".prisma/client").$Enums.ReviewStatus;
         rating: number;
+        productId: string;
         userId: string;
         comment: string;
-        productId: string;
     }>;
     getProductReviews(productId: string, page?: number, limit?: number): Promise<{
         reviews: ({
             user: {
-                id: string;
                 name: string;
                 email: string;
+                id: string;
             };
             product: {
-                id: string;
                 name: string;
+                id: string;
                 images: import("@prisma/client/runtime/library").JsonValue;
             };
         } & {
+            status: import(".prisma/client").$Enums.ReviewStatus;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            status: import(".prisma/client").$Enums.ReviewStatus;
             rating: number;
+            productId: string;
             userId: string;
             comment: string;
-            productId: string;
         })[];
         pagination: {
             page: number;
@@ -152,19 +152,19 @@ export declare class ReviewsService {
     getUserReviews(userId: string, page?: number, limit?: number): Promise<{
         reviews: ({
             product: {
-                id: string;
                 name: string;
+                id: string;
                 images: import("@prisma/client/runtime/library").JsonValue;
             };
         } & {
+            status: import(".prisma/client").$Enums.ReviewStatus;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            status: import(".prisma/client").$Enums.ReviewStatus;
             rating: number;
+            productId: string;
             userId: string;
             comment: string;
-            productId: string;
         })[];
         pagination: {
             page: number;

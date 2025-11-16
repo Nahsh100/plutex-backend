@@ -6,9 +6,9 @@ export declare class NotificationsService {
     constructor(prisma: PrismaService);
     create(createNotificationDto: CreateNotificationDto): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
     } & {
         data: import("@prisma/client/runtime/library").JsonValue | null;
@@ -26,9 +26,9 @@ export declare class NotificationsService {
     findAll(userId?: string, type?: string, page?: number, limit?: number): Promise<{
         notifications: ({
             user: {
-                id: string;
                 name: string;
                 email: string;
+                id: string;
             };
         } & {
             data: import("@prisma/client/runtime/library").JsonValue | null;
@@ -52,9 +52,9 @@ export declare class NotificationsService {
     }>;
     findOne(id: string): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
     } & {
         data: import("@prisma/client/runtime/library").JsonValue | null;
@@ -71,9 +71,9 @@ export declare class NotificationsService {
     }>;
     update(id: string, updateNotificationDto: UpdateNotificationDto): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
     } & {
         data: import("@prisma/client/runtime/library").JsonValue | null;
@@ -129,9 +129,9 @@ export declare class NotificationsService {
     getUnreadCount(userId: string): Promise<number>;
     createOrderNotification(userId: string, orderId: string, status: string): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
     } & {
         data: import("@prisma/client/runtime/library").JsonValue | null;
@@ -148,9 +148,9 @@ export declare class NotificationsService {
     }>;
     createPromotionNotification(userId: string, title: string, message: string, data?: any): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
     } & {
         data: import("@prisma/client/runtime/library").JsonValue | null;
@@ -167,9 +167,9 @@ export declare class NotificationsService {
     }>;
     createSystemNotification(userId: string, title: string, message: string, data?: any): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
     } & {
         data: import("@prisma/client/runtime/library").JsonValue | null;
@@ -186,9 +186,9 @@ export declare class NotificationsService {
     }>;
     createVendorNotification(userId: string, title: string, message: string, data?: any): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
     } & {
         data: import("@prisma/client/runtime/library").JsonValue | null;

@@ -6,9 +6,9 @@ export declare class NotificationsController {
     constructor(notificationsService: NotificationsService);
     create(createNotificationDto: CreateNotificationDto, req: any): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
     } & {
         data: import("@prisma/client/runtime/library").JsonValue | null;
@@ -26,9 +26,9 @@ export declare class NotificationsController {
     findAll(req: any, userId?: string, type?: string, page?: string, limit?: string): Promise<{
         notifications: ({
             user: {
-                id: string;
                 name: string;
                 email: string;
+                id: string;
             };
         } & {
             data: import("@prisma/client/runtime/library").JsonValue | null;
@@ -79,9 +79,9 @@ export declare class NotificationsController {
     }>;
     findOne(id: string, req: any): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
     } & {
         data: import("@prisma/client/runtime/library").JsonValue | null;
@@ -98,9 +98,9 @@ export declare class NotificationsController {
     }>;
     update(id: string, updateNotificationDto: UpdateNotificationDto, req: any): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
     } & {
         data: import("@prisma/client/runtime/library").JsonValue | null;
@@ -138,9 +138,9 @@ export declare class NotificationsController {
         status: string;
     }, req: any): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
     } & {
         data: import("@prisma/client/runtime/library").JsonValue | null;
@@ -162,9 +162,9 @@ export declare class NotificationsController {
         data?: any;
     }, req: any): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
     } & {
         data: import("@prisma/client/runtime/library").JsonValue | null;
@@ -186,9 +186,9 @@ export declare class NotificationsController {
         data?: any;
     }, req: any): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
     } & {
         data: import("@prisma/client/runtime/library").JsonValue | null;
@@ -210,9 +210,9 @@ export declare class NotificationsController {
         data?: any;
     }, req: any): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
     } & {
         data: import("@prisma/client/runtime/library").JsonValue | null;

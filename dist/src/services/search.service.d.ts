@@ -14,27 +14,24 @@ export declare class SearchService {
         products: {
             averageRating: number;
             reviewCount: number;
-            category: {
-                id: string;
-                name: string;
-                slug: string;
-            };
             vendor: {
-                id: string;
                 name: string;
+                id: string;
                 rating: number;
+            };
+            category: {
+                name: string;
+                id: string;
+                slug: string;
             };
             reviews: {
                 rating: number;
             }[];
-            id: string;
             name: string;
-            description: string;
-            isActive: boolean;
-            isFeatured: boolean;
+            id: string;
             createdAt: Date;
             updatedAt: Date;
-            rating: number;
+            description: string;
             price: number;
             originalPrice: number | null;
             brand: string;
@@ -42,11 +39,14 @@ export declare class SearchService {
             specifications: import("@prisma/client/runtime/library").JsonValue | null;
             availability: import(".prisma/client").$Enums.ProductAvailability;
             stockQuantity: number;
+            isActive: boolean;
+            isFeatured: boolean;
             sku: string | null;
             weight: number | null;
             dimensions: string | null;
             vendorId: string;
             categoryId: string;
+            rating: number;
             soldCount: number;
             fuzzyScore?: number;
         }[];
@@ -73,18 +73,18 @@ export declare class SearchService {
                 products: number;
             };
         } & {
-            id: string;
             name: string;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
             description: string | null;
+            isActive: boolean;
+            isFeatured: boolean;
             slug: string;
             image: string | null;
             metaTitle: string | null;
             metaDescription: string | null;
-            isActive: boolean;
-            isFeatured: boolean;
             sortOrder: number;
-            createdAt: Date;
-            updatedAt: Date;
         })[];
         pagination: {
             page: number;
@@ -100,23 +100,23 @@ export declare class SearchService {
                 products: number;
             };
         } & {
-            id: string;
             name: string;
-            description: string | null;
-            createdAt: Date;
-            updatedAt: Date;
             email: string;
             phone: string;
-            website: string | null;
             address: string;
             city: string;
             state: string;
             zipCode: string;
             country: string;
+            status: import(".prisma/client").$Enums.VendorStatus;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            description: string | null;
+            website: string | null;
             businessType: string | null;
             taxId: string | null;
             isVerified: boolean;
-            status: import(".prisma/client").$Enums.VendorStatus;
             rating: number;
             reviewCount: number;
             logo: string | null;

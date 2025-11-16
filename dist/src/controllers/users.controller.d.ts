@@ -6,10 +6,10 @@ export declare class UsersController {
     constructor(usersService: UsersService);
     create(createUserDto: CreateUserDto): Promise<{
         orders: {
+            status: import(".prisma/client").$Enums.OrderStatus;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            status: import(".prisma/client").$Enums.OrderStatus;
             total: number;
             shippingCost: number;
             subtotal: number;
@@ -24,33 +24,33 @@ export declare class UsersController {
             userId: string;
         }[];
     } & {
-        id: string;
         name: string;
-        createdAt: Date;
-        updatedAt: Date;
         email: string;
         phone: string;
+        dateOfBirth: Date | null;
+        gender: string | null;
         address: string;
         city: string;
         state: string;
         zipCode: string;
         country: string;
         status: import(".prisma/client").$Enums.UserStatus;
-        dateOfBirth: Date | null;
-        gender: string | null;
         role: import(".prisma/client").$Enums.UserRole;
         marketingConsent: boolean;
         password: string | null;
+        id: string;
         refreshToken: string | null;
         googleId: string | null;
+        createdAt: Date;
+        updatedAt: Date;
         emailVerified: boolean;
     }>;
     findAll(): Promise<({
         orders: {
+            status: import(".prisma/client").$Enums.OrderStatus;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            status: import(".prisma/client").$Enums.OrderStatus;
             total: number;
             shippingCost: number;
             subtotal: number;
@@ -65,25 +65,25 @@ export declare class UsersController {
             userId: string;
         }[];
     } & {
-        id: string;
         name: string;
-        createdAt: Date;
-        updatedAt: Date;
         email: string;
         phone: string;
+        dateOfBirth: Date | null;
+        gender: string | null;
         address: string;
         city: string;
         state: string;
         zipCode: string;
         country: string;
         status: import(".prisma/client").$Enums.UserStatus;
-        dateOfBirth: Date | null;
-        gender: string | null;
         role: import(".prisma/client").$Enums.UserRole;
         marketingConsent: boolean;
         password: string | null;
+        id: string;
         refreshToken: string | null;
         googleId: string | null;
+        createdAt: Date;
+        updatedAt: Date;
         emailVerified: boolean;
     })[]>;
     getStats(): Promise<{
@@ -95,10 +95,10 @@ export declare class UsersController {
     }>;
     findOne(id: string): Promise<{
         orders: {
+            status: import(".prisma/client").$Enums.OrderStatus;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            status: import(".prisma/client").$Enums.OrderStatus;
             total: number;
             shippingCost: number;
             subtotal: number;
@@ -113,43 +113,43 @@ export declare class UsersController {
             userId: string;
         }[];
         reviews: {
+            status: import(".prisma/client").$Enums.ReviewStatus;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            status: import(".prisma/client").$Enums.ReviewStatus;
             rating: number;
+            productId: string;
             userId: string;
             comment: string;
-            productId: string;
         }[];
     } & {
-        id: string;
         name: string;
-        createdAt: Date;
-        updatedAt: Date;
         email: string;
         phone: string;
+        dateOfBirth: Date | null;
+        gender: string | null;
         address: string;
         city: string;
         state: string;
         zipCode: string;
         country: string;
         status: import(".prisma/client").$Enums.UserStatus;
-        dateOfBirth: Date | null;
-        gender: string | null;
         role: import(".prisma/client").$Enums.UserRole;
         marketingConsent: boolean;
         password: string | null;
+        id: string;
         refreshToken: string | null;
         googleId: string | null;
+        createdAt: Date;
+        updatedAt: Date;
         emailVerified: boolean;
     }>;
     update(id: string, updateUserDto: UpdateUserDto): Promise<{
         orders: {
+            status: import(".prisma/client").$Enums.OrderStatus;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            status: import(".prisma/client").$Enums.OrderStatus;
             total: number;
             shippingCost: number;
             subtotal: number;
@@ -164,35 +164,35 @@ export declare class UsersController {
             userId: string;
         }[];
         reviews: {
+            status: import(".prisma/client").$Enums.ReviewStatus;
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            status: import(".prisma/client").$Enums.ReviewStatus;
             rating: number;
+            productId: string;
             userId: string;
             comment: string;
-            productId: string;
         }[];
     } & {
-        id: string;
         name: string;
-        createdAt: Date;
-        updatedAt: Date;
         email: string;
         phone: string;
+        dateOfBirth: Date | null;
+        gender: string | null;
         address: string;
         city: string;
         state: string;
         zipCode: string;
         country: string;
         status: import(".prisma/client").$Enums.UserStatus;
-        dateOfBirth: Date | null;
-        gender: string | null;
         role: import(".prisma/client").$Enums.UserRole;
         marketingConsent: boolean;
         password: string | null;
+        id: string;
         refreshToken: string | null;
         googleId: string | null;
+        createdAt: Date;
+        updatedAt: Date;
         emailVerified: boolean;
     }>;
     remove(id: string): Promise<void>;

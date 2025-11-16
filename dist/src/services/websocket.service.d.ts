@@ -6,9 +6,9 @@ export declare class WebSocketService {
     constructor(notificationsGateway: NotificationsGateway, notificationsService: NotificationsService);
     sendOrderStatusUpdate(userId: string, orderId: string, status: string, orderData?: any): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
     } & {
         data: import("@prisma/client/runtime/library").JsonValue | null;
@@ -25,9 +25,9 @@ export declare class WebSocketService {
     }>;
     sendNotificationToUser(userId: string, title: string, message: string, type?: string, data?: any): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
     } & {
         data: import("@prisma/client/runtime/library").JsonValue | null;
@@ -53,9 +53,9 @@ export declare class WebSocketService {
     }>;
     sendVendorUpdate(userId: string, title: string, message: string, data?: any): Promise<{
         user: {
-            id: string;
             name: string;
             email: string;
+            id: string;
         };
     } & {
         data: import("@prisma/client/runtime/library").JsonValue | null;

@@ -4,15 +4,11 @@ export declare class WishlistService {
     constructor(prisma: PrismaService);
     getUserWishlist(userId: string): Promise<({
         product: {
-            id: string;
             name: string;
-            description: string;
-            isActive: boolean;
-            isFeatured: boolean;
+            id: string;
             createdAt: Date;
             updatedAt: Date;
-            rating: number;
-            reviewCount: number;
+            description: string;
             price: number;
             originalPrice: number | null;
             brand: string;
@@ -20,30 +16,30 @@ export declare class WishlistService {
             specifications: import("@prisma/client/runtime/library").JsonValue | null;
             availability: import(".prisma/client").$Enums.ProductAvailability;
             stockQuantity: number;
+            isActive: boolean;
+            isFeatured: boolean;
             sku: string | null;
             weight: number | null;
             dimensions: string | null;
             vendorId: string;
             categoryId: string;
+            rating: number;
+            reviewCount: number;
             soldCount: number;
         };
     } & {
         id: string;
         createdAt: Date;
-        userId: string;
         productId: string;
+        userId: string;
     })[]>;
     addToWishlist(userId: string, productId: string): Promise<{
         product: {
-            id: string;
             name: string;
-            description: string;
-            isActive: boolean;
-            isFeatured: boolean;
+            id: string;
             createdAt: Date;
             updatedAt: Date;
-            rating: number;
-            reviewCount: number;
+            description: string;
             price: number;
             originalPrice: number | null;
             brand: string;
@@ -51,18 +47,22 @@ export declare class WishlistService {
             specifications: import("@prisma/client/runtime/library").JsonValue | null;
             availability: import(".prisma/client").$Enums.ProductAvailability;
             stockQuantity: number;
+            isActive: boolean;
+            isFeatured: boolean;
             sku: string | null;
             weight: number | null;
             dimensions: string | null;
             vendorId: string;
             categoryId: string;
+            rating: number;
+            reviewCount: number;
             soldCount: number;
         };
     } & {
         id: string;
         createdAt: Date;
-        userId: string;
         productId: string;
+        userId: string;
     }>;
     removeFromWishlist(userId: string, productId: string): Promise<{
         success: boolean;
