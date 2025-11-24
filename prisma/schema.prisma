@@ -27,6 +27,7 @@ enum VendorStatus {
   INACTIVE
   PENDING
   SUSPENDED
+  REJECTED
 }
 
 enum ProductAvailability {
@@ -113,6 +114,11 @@ model Vendor {
   description   String?
   businessType  String?
   taxId         String?
+  idType        String?
+  idNumber      String?
+  registrationNumber String?
+  documentUrl   String?
+  internalNotes String?
   isVerified    Boolean      @default(false)
   status        VendorStatus @default(PENDING)
   rating        Float        @default(0)

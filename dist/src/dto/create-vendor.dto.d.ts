@@ -2,7 +2,8 @@ export declare enum VendorStatus {
     ACTIVE = "ACTIVE",
     INACTIVE = "INACTIVE",
     PENDING = "PENDING",
-    SUSPENDED = "SUSPENDED"
+    SUSPENDED = "SUSPENDED",
+    REJECTED = "REJECTED"
 }
 export declare class CreateVendorDto {
     name: string;
@@ -17,6 +18,11 @@ export declare class CreateVendorDto {
     description?: string;
     businessType?: string;
     taxId?: string;
+    idType?: string;
+    idNumber?: string;
+    registrationNumber?: string;
+    documentUrl?: string;
+    internalNotes?: string;
     isVerified?: boolean;
     status?: VendorStatus;
     rating?: number;

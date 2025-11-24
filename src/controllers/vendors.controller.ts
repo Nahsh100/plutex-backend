@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
 import { VendorsService } from '../services/vendors.service';
 import { CreateVendorDto } from '../dto/create-vendor.dto';
 import { UpdateVendorDto } from '../dto/update-vendor.dto';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller('vendors')
 export class VendorsController {
@@ -17,9 +18,30 @@ export class VendorsController {
     return this.vendorsService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  getMyVendor(@Request() req) {
+    // Prefer vendorId on the user payload if present, fallback to email lookup
+    if (req.user?.vendorId) {
+      return this.vendorsService.findOne(req.user.vendorId);
+    }
+    return this.vendorsService.findByEmail(req.user.email);
+  }
+
   @Get('stats')
   getStats() {
     return this.vendorsService.getVendorsStats();
+  }
+
+  @Get('by-email/:email')
+  async findByEmail(@Param('email') email: string) {
+    try {
+      return await this.vendorsService.findByEmail(email);
+    } catch (error) {
+      // Return null instead of throwing error when vendor not found
+      // This allows frontend to check vendor status without errors
+      return null;
+    }
   }
 
   @Get(':id/dashboard-stats')

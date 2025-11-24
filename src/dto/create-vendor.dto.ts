@@ -5,6 +5,7 @@ export enum VendorStatus {
   INACTIVE = 'INACTIVE',
   PENDING = 'PENDING',
   SUSPENDED = 'SUSPENDED',
+  REJECTED = 'REJECTED',
 }
 
 export class CreateVendorDto {
@@ -47,6 +48,26 @@ export class CreateVendorDto {
   @IsOptional()
   @IsString()
   taxId?: string;
+
+  @IsOptional()
+  @IsString()
+  idType?: string;
+
+  @IsOptional()
+  @IsString()
+  idNumber?: string;
+
+  @IsOptional()
+  @IsString()
+  registrationNumber?: string;
+
+  @IsOptional()
+  @IsString()
+  documentUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  internalNotes?: string;
 
   @IsOptional()
   @IsBoolean()

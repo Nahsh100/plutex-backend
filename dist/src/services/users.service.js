@@ -99,6 +99,21 @@ let UsersService = UsersService_1 = class UsersService {
             },
         });
     }
+    async updateRole(id, role) {
+        if (!Object.values(create_user_dto_1.UserRole).includes(role)) {
+            throw new Error(`Invalid role: ${role}`);
+        }
+        const user = await this.prisma.user.update({
+            where: { id },
+            data: { role: role },
+            include: {
+                orders: true,
+                reviews: true,
+            },
+        });
+        this.logger.log(`User ${id} role updated to ${role}`);
+        return user;
+    }
     async remove(id) {
         await this.prisma.user.delete({
             where: { id },

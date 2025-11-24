@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const vendors_service_1 = require("../services/vendors.service");
 const create_vendor_dto_1 = require("../dto/create-vendor.dto");
 const update_vendor_dto_1 = require("../dto/update-vendor.dto");
+const jwt_auth_guard_1 = require("../guards/jwt-auth.guard");
 let VendorsController = class VendorsController {
     constructor(vendorsService) {
         this.vendorsService = vendorsService;
@@ -27,8 +28,22 @@ let VendorsController = class VendorsController {
     findAll() {
         return this.vendorsService.findAll();
     }
+    getMyVendor(req) {
+        if (req.user?.vendorId) {
+            return this.vendorsService.findOne(req.user.vendorId);
+        }
+        return this.vendorsService.findByEmail(req.user.email);
+    }
     getStats() {
         return this.vendorsService.getVendorsStats();
+    }
+    async findByEmail(email) {
+        try {
+            return await this.vendorsService.findByEmail(email);
+        }
+        catch (error) {
+            return null;
+        }
     }
     getVendorDashboardStats(id) {
         return this.vendorsService.getVendorDashboardStats(id);
@@ -67,11 +82,26 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], VendorsController.prototype, "findAll", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('me'),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], VendorsController.prototype, "getMyVendor", null);
+__decorate([
     (0, common_1.Get)('stats'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], VendorsController.prototype, "getStats", null);
+__decorate([
+    (0, common_1.Get)('by-email/:email'),
+    __param(0, (0, common_1.Param)('email')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], VendorsController.prototype, "findByEmail", null);
 __decorate([
     (0, common_1.Get)(':id/dashboard-stats'),
     __param(0, (0, common_1.Param)('id')),

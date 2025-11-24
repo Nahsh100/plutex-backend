@@ -7,20 +7,20 @@ export declare class SearchController {
             averageRating: number;
             reviewCount: number;
             vendor: {
-                name: string;
                 id: string;
+                name: string;
                 rating: number;
             };
             category: {
-                name: string;
                 id: string;
+                name: string;
                 slug: string;
             };
             reviews: {
                 rating: number;
             }[];
-            name: string;
             id: string;
+            name: string;
             createdAt: Date;
             updatedAt: Date;
             description: string;
@@ -75,8 +75,8 @@ export declare class SearchController {
                 products: number;
             };
         } & {
-            name: string;
             id: string;
+            name: string;
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
@@ -111,22 +111,27 @@ export declare class SearchController {
                 products: number;
             };
         } & {
+            id: string;
             name: string;
             email: string;
             phone: string;
             address: string;
             city: string;
-            state: string;
-            zipCode: string;
+            state: string | null;
+            zipCode: string | null;
             country: string;
             status: import(".prisma/client").$Enums.VendorStatus;
-            id: string;
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
             website: string | null;
             businessType: string | null;
             taxId: string | null;
+            idType: string | null;
+            idNumber: string | null;
+            registrationNumber: string | null;
+            documentUrl: string | null;
+            internalNotes: string | null;
             isVerified: boolean;
             rating: number;
             reviewCount: number;
@@ -177,20 +182,20 @@ export declare class SearchController {
                 averageRating: number;
                 reviewCount: number;
                 vendor: {
-                    name: string;
                     id: string;
+                    name: string;
                     rating: number;
                 };
                 category: {
-                    name: string;
                     id: string;
+                    name: string;
                     slug: string;
                 };
                 reviews: {
                     rating: number;
                 }[];
-                name: string;
                 id: string;
+                name: string;
                 createdAt: Date;
                 updatedAt: Date;
                 description: string;
@@ -235,8 +240,8 @@ export declare class SearchController {
                     products: number;
                 };
             } & {
-                name: string;
                 id: string;
+                name: string;
                 createdAt: Date;
                 updatedAt: Date;
                 description: string | null;
@@ -262,22 +267,27 @@ export declare class SearchController {
                     products: number;
                 };
             } & {
+                id: string;
                 name: string;
                 email: string;
                 phone: string;
                 address: string;
                 city: string;
-                state: string;
-                zipCode: string;
+                state: string | null;
+                zipCode: string | null;
                 country: string;
                 status: import(".prisma/client").$Enums.VendorStatus;
-                id: string;
                 createdAt: Date;
                 updatedAt: Date;
                 description: string | null;
                 website: string | null;
                 businessType: string | null;
                 taxId: string | null;
+                idType: string | null;
+                idNumber: string | null;
+                registrationNumber: string | null;
+                documentUrl: string | null;
+                internalNotes: string | null;
                 isVerified: boolean;
                 rating: number;
                 reviewCount: number;

@@ -6,22 +6,27 @@ export declare class ProductsController {
     constructor(productsService: ProductsService);
     create(createProductDto: CreateProductDto): Promise<{
         vendor: {
+            id: string;
             name: string;
             email: string;
             phone: string;
             address: string;
             city: string;
-            state: string;
-            zipCode: string;
+            state: string | null;
+            zipCode: string | null;
             country: string;
             status: import(".prisma/client").$Enums.VendorStatus;
-            id: string;
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
             website: string | null;
             businessType: string | null;
             taxId: string | null;
+            idType: string | null;
+            idNumber: string | null;
+            registrationNumber: string | null;
+            documentUrl: string | null;
+            internalNotes: string | null;
             isVerified: boolean;
             rating: number;
             reviewCount: number;
@@ -29,8 +34,8 @@ export declare class ProductsController {
             location: string | null;
         };
         category: {
-            name: string;
             id: string;
+            name: string;
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
@@ -43,18 +48,18 @@ export declare class ProductsController {
             sortOrder: number;
         };
         reviews: {
-            status: import(".prisma/client").$Enums.ReviewStatus;
             id: string;
+            status: import(".prisma/client").$Enums.ReviewStatus;
             createdAt: Date;
             updatedAt: Date;
             rating: number;
             productId: string;
-            userId: string;
             comment: string;
+            userId: string;
         }[];
     } & {
-        name: string;
         id: string;
+        name: string;
         createdAt: Date;
         updatedAt: Date;
         description: string;
@@ -76,24 +81,29 @@ export declare class ProductsController {
         reviewCount: number;
         soldCount: number;
     }>;
-    findAll(): Promise<({
+    findAll(search?: string): Promise<({
         vendor: {
+            id: string;
             name: string;
             email: string;
             phone: string;
             address: string;
             city: string;
-            state: string;
-            zipCode: string;
+            state: string | null;
+            zipCode: string | null;
             country: string;
             status: import(".prisma/client").$Enums.VendorStatus;
-            id: string;
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
             website: string | null;
             businessType: string | null;
             taxId: string | null;
+            idType: string | null;
+            idNumber: string | null;
+            registrationNumber: string | null;
+            documentUrl: string | null;
+            internalNotes: string | null;
             isVerified: boolean;
             rating: number;
             reviewCount: number;
@@ -101,8 +111,8 @@ export declare class ProductsController {
             location: string | null;
         };
         category: {
-            name: string;
             id: string;
+            name: string;
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
@@ -115,18 +125,18 @@ export declare class ProductsController {
             sortOrder: number;
         };
         reviews: {
-            status: import(".prisma/client").$Enums.ReviewStatus;
             id: string;
+            status: import(".prisma/client").$Enums.ReviewStatus;
             createdAt: Date;
             updatedAt: Date;
             rating: number;
             productId: string;
-            userId: string;
             comment: string;
+            userId: string;
         }[];
     } & {
-        name: string;
         id: string;
+        name: string;
         createdAt: Date;
         updatedAt: Date;
         description: string;
@@ -156,22 +166,27 @@ export declare class ProductsController {
     }>;
     findByCategory(categoryId: string): Promise<({
         vendor: {
+            id: string;
             name: string;
             email: string;
             phone: string;
             address: string;
             city: string;
-            state: string;
-            zipCode: string;
+            state: string | null;
+            zipCode: string | null;
             country: string;
             status: import(".prisma/client").$Enums.VendorStatus;
-            id: string;
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
             website: string | null;
             businessType: string | null;
             taxId: string | null;
+            idType: string | null;
+            idNumber: string | null;
+            registrationNumber: string | null;
+            documentUrl: string | null;
+            internalNotes: string | null;
             isVerified: boolean;
             rating: number;
             reviewCount: number;
@@ -179,8 +194,8 @@ export declare class ProductsController {
             location: string | null;
         };
         category: {
-            name: string;
             id: string;
+            name: string;
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
@@ -193,8 +208,8 @@ export declare class ProductsController {
             sortOrder: number;
         };
     } & {
-        name: string;
         id: string;
+        name: string;
         createdAt: Date;
         updatedAt: Date;
         description: string;
@@ -219,22 +234,27 @@ export declare class ProductsController {
     findByVendor(vendorId: string): Promise<{
         soldCount: number;
         vendor: {
+            id: string;
             name: string;
             email: string;
             phone: string;
             address: string;
             city: string;
-            state: string;
-            zipCode: string;
+            state: string | null;
+            zipCode: string | null;
             country: string;
             status: import(".prisma/client").$Enums.VendorStatus;
-            id: string;
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
             website: string | null;
             businessType: string | null;
             taxId: string | null;
+            idType: string | null;
+            idNumber: string | null;
+            registrationNumber: string | null;
+            documentUrl: string | null;
+            internalNotes: string | null;
             isVerified: boolean;
             rating: number;
             reviewCount: number;
@@ -242,8 +262,8 @@ export declare class ProductsController {
             location: string | null;
         };
         category: {
-            name: string;
             id: string;
+            name: string;
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
@@ -264,8 +284,8 @@ export declare class ProductsController {
             productId: string;
             vendorOrderId: string | null;
         }[];
-        name: string;
         id: string;
+        name: string;
         createdAt: Date;
         updatedAt: Date;
         description: string;
@@ -288,22 +308,27 @@ export declare class ProductsController {
     }[]>;
     findOne(id: string): Promise<{
         vendor: {
+            id: string;
             name: string;
             email: string;
             phone: string;
             address: string;
             city: string;
-            state: string;
-            zipCode: string;
+            state: string | null;
+            zipCode: string | null;
             country: string;
             status: import(".prisma/client").$Enums.VendorStatus;
-            id: string;
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
             website: string | null;
             businessType: string | null;
             taxId: string | null;
+            idType: string | null;
+            idNumber: string | null;
+            registrationNumber: string | null;
+            documentUrl: string | null;
+            internalNotes: string | null;
             isVerified: boolean;
             rating: number;
             reviewCount: number;
@@ -311,8 +336,8 @@ export declare class ProductsController {
             location: string | null;
         };
         category: {
-            name: string;
             id: string;
+            name: string;
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
@@ -325,14 +350,14 @@ export declare class ProductsController {
             sortOrder: number;
         };
         reviews: {
-            status: import(".prisma/client").$Enums.ReviewStatus;
             id: string;
+            status: import(".prisma/client").$Enums.ReviewStatus;
             createdAt: Date;
             updatedAt: Date;
             rating: number;
             productId: string;
-            userId: string;
             comment: string;
+            userId: string;
         }[];
         orderItems: {
             id: string;
@@ -344,8 +369,8 @@ export declare class ProductsController {
             vendorOrderId: string | null;
         }[];
     } & {
-        name: string;
         id: string;
+        name: string;
         createdAt: Date;
         updatedAt: Date;
         description: string;
@@ -369,22 +394,27 @@ export declare class ProductsController {
     }>;
     update(id: string, updateProductDto: UpdateProductDto): Promise<{
         vendor: {
+            id: string;
             name: string;
             email: string;
             phone: string;
             address: string;
             city: string;
-            state: string;
-            zipCode: string;
+            state: string | null;
+            zipCode: string | null;
             country: string;
             status: import(".prisma/client").$Enums.VendorStatus;
-            id: string;
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
             website: string | null;
             businessType: string | null;
             taxId: string | null;
+            idType: string | null;
+            idNumber: string | null;
+            registrationNumber: string | null;
+            documentUrl: string | null;
+            internalNotes: string | null;
             isVerified: boolean;
             rating: number;
             reviewCount: number;
@@ -392,8 +422,8 @@ export declare class ProductsController {
             location: string | null;
         };
         category: {
-            name: string;
             id: string;
+            name: string;
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
@@ -406,18 +436,18 @@ export declare class ProductsController {
             sortOrder: number;
         };
         reviews: {
-            status: import(".prisma/client").$Enums.ReviewStatus;
             id: string;
+            status: import(".prisma/client").$Enums.ReviewStatus;
             createdAt: Date;
             updatedAt: Date;
             rating: number;
             productId: string;
-            userId: string;
             comment: string;
+            userId: string;
         }[];
     } & {
-        name: string;
         id: string;
+        name: string;
         createdAt: Date;
         updatedAt: Date;
         description: string;

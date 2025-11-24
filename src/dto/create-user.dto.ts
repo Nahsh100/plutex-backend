@@ -13,6 +13,10 @@ export enum UserRole {
 }
 
 export class CreateUserDto {
+  @IsOptional()
+  @IsString()
+  id?: string;
+
   @IsString()
   name: string;
 

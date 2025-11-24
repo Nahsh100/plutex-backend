@@ -3,8 +3,8 @@ export declare class PayoutsController {
     private payoutsService;
     constructor(payoutsService: PayoutsService);
     myPayouts(req: any): Promise<{
-        status: import(".prisma/client").$Enums.PayoutStatus;
         id: string;
+        status: import(".prisma/client").$Enums.PayoutStatus;
         vendorId: string;
         amount: number;
         reference: string | null;
@@ -18,8 +18,8 @@ export declare class PayoutsController {
         currency?: string;
         note?: string;
     }): Promise<{
-        status: import(".prisma/client").$Enums.PayoutStatus;
         id: string;
+        status: import(".prisma/client").$Enums.PayoutStatus;
         vendorId: string;
         amount: number;
         reference: string | null;
@@ -30,22 +30,27 @@ export declare class PayoutsController {
     }>;
     listAll(status?: string): Promise<({
         vendor: {
+            id: string;
             name: string;
             email: string;
             phone: string;
             address: string;
             city: string;
-            state: string;
-            zipCode: string;
+            state: string | null;
+            zipCode: string | null;
             country: string;
             status: import(".prisma/client").$Enums.VendorStatus;
-            id: string;
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
             website: string | null;
             businessType: string | null;
             taxId: string | null;
+            idType: string | null;
+            idNumber: string | null;
+            registrationNumber: string | null;
+            documentUrl: string | null;
+            internalNotes: string | null;
             isVerified: boolean;
             rating: number;
             reviewCount: number;
@@ -53,8 +58,8 @@ export declare class PayoutsController {
             location: string | null;
         };
     } & {
-        status: import(".prisma/client").$Enums.PayoutStatus;
         id: string;
+        status: import(".prisma/client").$Enums.PayoutStatus;
         vendorId: string;
         amount: number;
         reference: string | null;
@@ -66,8 +71,8 @@ export declare class PayoutsController {
     markPaid(id: string, body: {
         reference?: string;
     }): Promise<{
-        status: import(".prisma/client").$Enums.PayoutStatus;
         id: string;
+        status: import(".prisma/client").$Enums.PayoutStatus;
         vendorId: string;
         amount: number;
         reference: string | null;

@@ -6,6 +6,7 @@ export declare class OrdersController {
     constructor(ordersService: OrdersService);
     create(createOrderDto: CreateOrderDto): Promise<{
         user: {
+            id: string;
             name: string;
             email: string;
             phone: string;
@@ -13,14 +14,13 @@ export declare class OrdersController {
             gender: string | null;
             address: string;
             city: string;
-            state: string;
-            zipCode: string;
+            state: string | null;
+            zipCode: string | null;
             country: string;
             status: import(".prisma/client").$Enums.UserStatus;
             role: import(".prisma/client").$Enums.UserRole;
             marketingConsent: boolean;
             password: string | null;
-            id: string;
             refreshToken: string | null;
             googleId: string | null;
             createdAt: Date;
@@ -29,22 +29,27 @@ export declare class OrdersController {
         };
         vendorOrders: ({
             vendor: {
+                id: string;
                 name: string;
                 email: string;
                 phone: string;
                 address: string;
                 city: string;
-                state: string;
-                zipCode: string;
+                state: string | null;
+                zipCode: string | null;
                 country: string;
                 status: import(".prisma/client").$Enums.VendorStatus;
-                id: string;
                 createdAt: Date;
                 updatedAt: Date;
                 description: string | null;
                 website: string | null;
                 businessType: string | null;
                 taxId: string | null;
+                idType: string | null;
+                idNumber: string | null;
+                registrationNumber: string | null;
+                documentUrl: string | null;
+                internalNotes: string | null;
                 isVerified: boolean;
                 rating: number;
                 reviewCount: number;
@@ -61,8 +66,8 @@ export declare class OrdersController {
                 vendorOrderId: string | null;
             }[];
         } & {
-            status: import(".prisma/client").$Enums.OrderStatus;
             id: string;
+            status: import(".prisma/client").$Enums.OrderStatus;
             createdAt: Date;
             updatedAt: Date;
             total: number;
@@ -71,15 +76,15 @@ export declare class OrdersController {
             tax: number;
             vendorId: string;
             orderId: string;
-            vendorEarnings: number;
+            paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
             commissionRate: number;
             commissionAmount: number;
-            paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
+            vendorEarnings: number;
         })[];
         items: ({
             product: {
-                name: string;
                 id: string;
+                name: string;
                 createdAt: Date;
                 updatedAt: Date;
                 description: string;
@@ -111,25 +116,26 @@ export declare class OrdersController {
             vendorOrderId: string | null;
         })[];
     } & {
-        status: import(".prisma/client").$Enums.OrderStatus;
         id: string;
+        status: import(".prisma/client").$Enums.OrderStatus;
         createdAt: Date;
         updatedAt: Date;
         total: number;
         shippingCost: number;
         subtotal: number;
         tax: number;
-        orderNumber: string;
+        userId: string;
         paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
+        orderNumber: string;
         paymentMethod: string;
         shippingMethod: string;
         shippingAddress: import("@prisma/client/runtime/library").JsonValue;
         trackingNumber: string | null;
         notes: string | null;
-        userId: string;
     }>;
     findAll(): Promise<({
         user: {
+            id: string;
             name: string;
             email: string;
             phone: string;
@@ -137,14 +143,13 @@ export declare class OrdersController {
             gender: string | null;
             address: string;
             city: string;
-            state: string;
-            zipCode: string;
+            state: string | null;
+            zipCode: string | null;
             country: string;
             status: import(".prisma/client").$Enums.UserStatus;
             role: import(".prisma/client").$Enums.UserRole;
             marketingConsent: boolean;
             password: string | null;
-            id: string;
             refreshToken: string | null;
             googleId: string | null;
             createdAt: Date;
@@ -153,8 +158,8 @@ export declare class OrdersController {
         };
         items: ({
             product: {
-                name: string;
                 id: string;
+                name: string;
                 createdAt: Date;
                 updatedAt: Date;
                 description: string;
@@ -186,22 +191,22 @@ export declare class OrdersController {
             vendorOrderId: string | null;
         })[];
     } & {
-        status: import(".prisma/client").$Enums.OrderStatus;
         id: string;
+        status: import(".prisma/client").$Enums.OrderStatus;
         createdAt: Date;
         updatedAt: Date;
         total: number;
         shippingCost: number;
         subtotal: number;
         tax: number;
-        orderNumber: string;
+        userId: string;
         paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
+        orderNumber: string;
         paymentMethod: string;
         shippingMethod: string;
         shippingAddress: import("@prisma/client/runtime/library").JsonValue;
         trackingNumber: string | null;
         notes: string | null;
-        userId: string;
     })[]>;
     getStats(): Promise<{
         totalOrders: number;
@@ -216,8 +221,13 @@ export declare class OrdersController {
         value: number;
         amount: number;
     }[]>;
+    syncVendorOrders(): Promise<{
+        syncedOrders: number;
+        syncedVendorOrders: number;
+    }>;
     getUserOrders(req: any): Promise<({
         user: {
+            id: string;
             name: string;
             email: string;
             phone: string;
@@ -225,14 +235,13 @@ export declare class OrdersController {
             gender: string | null;
             address: string;
             city: string;
-            state: string;
-            zipCode: string;
+            state: string | null;
+            zipCode: string | null;
             country: string;
             status: import(".prisma/client").$Enums.UserStatus;
             role: import(".prisma/client").$Enums.UserRole;
             marketingConsent: boolean;
             password: string | null;
-            id: string;
             refreshToken: string | null;
             googleId: string | null;
             createdAt: Date;
@@ -241,8 +250,8 @@ export declare class OrdersController {
         };
         items: ({
             product: {
-                name: string;
                 id: string;
+                name: string;
                 createdAt: Date;
                 updatedAt: Date;
                 description: string;
@@ -274,25 +283,26 @@ export declare class OrdersController {
             vendorOrderId: string | null;
         })[];
     } & {
-        status: import(".prisma/client").$Enums.OrderStatus;
         id: string;
+        status: import(".prisma/client").$Enums.OrderStatus;
         createdAt: Date;
         updatedAt: Date;
         total: number;
         shippingCost: number;
         subtotal: number;
         tax: number;
-        orderNumber: string;
+        userId: string;
         paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
+        orderNumber: string;
         paymentMethod: string;
         shippingMethod: string;
         shippingAddress: import("@prisma/client/runtime/library").JsonValue;
         trackingNumber: string | null;
         notes: string | null;
-        userId: string;
     })[]>;
     findOne(id: string): Promise<{
         user: {
+            id: string;
             name: string;
             email: string;
             phone: string;
@@ -300,14 +310,13 @@ export declare class OrdersController {
             gender: string | null;
             address: string;
             city: string;
-            state: string;
-            zipCode: string;
+            state: string | null;
+            zipCode: string | null;
             country: string;
             status: import(".prisma/client").$Enums.UserStatus;
             role: import(".prisma/client").$Enums.UserRole;
             marketingConsent: boolean;
             password: string | null;
-            id: string;
             refreshToken: string | null;
             googleId: string | null;
             createdAt: Date;
@@ -316,8 +325,8 @@ export declare class OrdersController {
         };
         items: ({
             product: {
-                name: string;
                 id: string;
+                name: string;
                 createdAt: Date;
                 updatedAt: Date;
                 description: string;
@@ -349,25 +358,26 @@ export declare class OrdersController {
             vendorOrderId: string | null;
         })[];
     } & {
-        status: import(".prisma/client").$Enums.OrderStatus;
         id: string;
+        status: import(".prisma/client").$Enums.OrderStatus;
         createdAt: Date;
         updatedAt: Date;
         total: number;
         shippingCost: number;
         subtotal: number;
         tax: number;
-        orderNumber: string;
+        userId: string;
         paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
+        orderNumber: string;
         paymentMethod: string;
         shippingMethod: string;
         shippingAddress: import("@prisma/client/runtime/library").JsonValue;
         trackingNumber: string | null;
         notes: string | null;
-        userId: string;
     }>;
     update(id: string, updateOrderDto: UpdateOrderDto): Promise<{
         user: {
+            id: string;
             name: string;
             email: string;
             phone: string;
@@ -375,14 +385,13 @@ export declare class OrdersController {
             gender: string | null;
             address: string;
             city: string;
-            state: string;
-            zipCode: string;
+            state: string | null;
+            zipCode: string | null;
             country: string;
             status: import(".prisma/client").$Enums.UserStatus;
             role: import(".prisma/client").$Enums.UserRole;
             marketingConsent: boolean;
             password: string | null;
-            id: string;
             refreshToken: string | null;
             googleId: string | null;
             createdAt: Date;
@@ -391,8 +400,8 @@ export declare class OrdersController {
         };
         items: ({
             product: {
-                name: string;
                 id: string;
+                name: string;
                 createdAt: Date;
                 updatedAt: Date;
                 description: string;
@@ -424,22 +433,22 @@ export declare class OrdersController {
             vendorOrderId: string | null;
         })[];
     } & {
-        status: import(".prisma/client").$Enums.OrderStatus;
         id: string;
+        status: import(".prisma/client").$Enums.OrderStatus;
         createdAt: Date;
         updatedAt: Date;
         total: number;
         shippingCost: number;
         subtotal: number;
         tax: number;
-        orderNumber: string;
+        userId: string;
         paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
+        orderNumber: string;
         paymentMethod: string;
         shippingMethod: string;
         shippingAddress: import("@prisma/client/runtime/library").JsonValue;
         trackingNumber: string | null;
         notes: string | null;
-        userId: string;
     }>;
     remove(id: string): Promise<void>;
 }

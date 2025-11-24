@@ -51,9 +51,7 @@ async function bootstrap() {
   // Enable CORS with explicit preflight handling
   const defaultOrigins = [
     'http://localhost:3000',
-    'http://localhost:3001',
-    'http://localhost:8083',
-    'http://localhost:19006',
+    'http://10.3.91.214:3000',
     'https://plutex-admin-production.up.railway.app',
     'https://plutex-admin.vercel.app',
     'https://plutex.co.zm',
@@ -69,13 +67,16 @@ async function bootstrap() {
   const allowedOrigins = parsedEnvOrigins.length > 0 ? parsedEnvOrigins : defaultOrigins;
 
   // Use dynamic origin function for more flexible CORS handling
+  const isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+  
   app.enableCors({
     origin: (origin: string | undefined, callback: (error: Error | null, origin?: boolean) => void) => {
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
       
       // In development, allow all origins
-      if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) {
+      if (isDevelopment) {
+        console.log(`✅ CORS allowed (dev mode): ${origin}`);
         return callback(null, true);
       }
       
@@ -94,15 +95,17 @@ async function bootstrap() {
       });
 
       if (isAllowed) {
+        console.log(`✅ CORS allowed: ${origin}`);
         callback(null, true);
       } else {
-        console.log(`CORS blocked origin: ${origin}`);
+        console.log(`❌ CORS blocked origin: ${origin}`);
         callback(null, false);
       }
     },
     credentials: true,
     methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+    exposedHeaders: ['Content-Range', 'X-Content-Range'],
     preflightContinue: false,
     optionsSuccessStatus: 204,
   });
@@ -127,7 +130,8 @@ async function bootstrap() {
   
   console.log(`🚀 Plutex Backend is running on: http://localhost:${port}`);
   console.log(`📚 API Documentation: http://localhost:${port}/api`);
-  console.log(`🌐 CORS enabled for: ${allowedOrigins.join(', ')}`);
+  console.log(`🔧 Environment: ${isDevelopment ? 'DEVELOPMENT' : 'PRODUCTION'}`);
+  console.log(`🌐 CORS enabled for: ${isDevelopment ? 'ALL ORIGINS (dev mode)' : allowedOrigins.join(', ')}`);
   console.log(`🗄️  Database URL: ${process.env.DATABASE_URL || 'file:./dev.db (SQLite)'}`);
   
   // Log database connection details

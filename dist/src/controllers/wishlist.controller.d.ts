@@ -4,8 +4,8 @@ export declare class WishlistController {
     constructor(wishlistService: WishlistService);
     getMyWishlist(req: any): Promise<({
         product: {
-            name: string;
             id: string;
+            name: string;
             createdAt: Date;
             updatedAt: Date;
             description: string;
@@ -35,8 +35,8 @@ export declare class WishlistController {
     })[]>;
     add(req: any, productId: string): Promise<{
         product: {
-            name: string;
             id: string;
+            name: string;
             createdAt: Date;
             updatedAt: Date;
             description: string;

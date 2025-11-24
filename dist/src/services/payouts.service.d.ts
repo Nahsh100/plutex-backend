@@ -4,8 +4,8 @@ export declare class PayoutsService {
     constructor(prisma: PrismaService);
     resolveVendorIdByEmail(email: string): Promise<string | null>;
     listVendorPayouts(vendorId: string): Promise<{
-        status: import(".prisma/client").$Enums.PayoutStatus;
         id: string;
+        status: import(".prisma/client").$Enums.PayoutStatus;
         vendorId: string;
         amount: number;
         reference: string | null;
@@ -16,22 +16,27 @@ export declare class PayoutsService {
     }[]>;
     listAllPayouts(status?: string): Promise<({
         vendor: {
+            id: string;
             name: string;
             email: string;
             phone: string;
             address: string;
             city: string;
-            state: string;
-            zipCode: string;
+            state: string | null;
+            zipCode: string | null;
             country: string;
             status: import(".prisma/client").$Enums.VendorStatus;
-            id: string;
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
             website: string | null;
             businessType: string | null;
             taxId: string | null;
+            idType: string | null;
+            idNumber: string | null;
+            registrationNumber: string | null;
+            documentUrl: string | null;
+            internalNotes: string | null;
             isVerified: boolean;
             rating: number;
             reviewCount: number;
@@ -39,8 +44,8 @@ export declare class PayoutsService {
             location: string | null;
         };
     } & {
-        status: import(".prisma/client").$Enums.PayoutStatus;
         id: string;
+        status: import(".prisma/client").$Enums.PayoutStatus;
         vendorId: string;
         amount: number;
         reference: string | null;
@@ -50,8 +55,8 @@ export declare class PayoutsService {
         note: string | null;
     })[]>;
     requestPayout(vendorId: string, amount: number, currency?: string, note?: string): Promise<{
-        status: import(".prisma/client").$Enums.PayoutStatus;
         id: string;
+        status: import(".prisma/client").$Enums.PayoutStatus;
         vendorId: string;
         amount: number;
         reference: string | null;
@@ -61,8 +66,8 @@ export declare class PayoutsService {
         note: string | null;
     }>;
     markPayoutPaid(payoutId: string, reference?: string): Promise<{
-        status: import(".prisma/client").$Enums.PayoutStatus;
         id: string;
+        status: import(".prisma/client").$Enums.PayoutStatus;
         vendorId: string;
         amount: number;
         reference: string | null;

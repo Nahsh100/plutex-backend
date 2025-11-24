@@ -164,6 +164,101 @@ let ProductsService = ProductsService_1 = class ProductsService {
             outOfStockProducts,
         };
     }
+    async search(query) {
+        const searchId = `search_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+        this.logger.log(`[${searchId}] Searching products with query: "${query}"`);
+        const normalizedQuery = query.toLowerCase().trim();
+        const searchWords = normalizedQuery.split(/\s+/).filter(word => word.length > 0);
+        this.logger.debug(`[${searchId}] Search words:`, searchWords);
+        try {
+            const allProducts = await this.prisma.product.findMany({
+                where: {
+                    isActive: true,
+                },
+                include: {
+                    vendor: true,
+                    category: true,
+                    reviews: true,
+                },
+            });
+            this.logger.debug(`[${searchId}] Total active products: ${allProducts.length}`);
+            const scoredProducts = allProducts
+                .map(product => {
+                let score = 0;
+                const productName = (product.name || '').toLowerCase();
+                const productDesc = (product.description || '').toLowerCase();
+                const productBrand = (product.brand || '').toLowerCase();
+                const categoryName = (product.category?.name || '').toLowerCase();
+                searchWords.forEach(word => {
+                    if (productName === word)
+                        score += 100;
+                    if (productBrand === word)
+                        score += 90;
+                    if (categoryName === word)
+                        score += 80;
+                    if (productName.startsWith(word))
+                        score += 50;
+                    if (productBrand.startsWith(word))
+                        score += 45;
+                    if (categoryName.startsWith(word))
+                        score += 40;
+                    if (productName.includes(word))
+                        score += 30;
+                    if (productBrand.includes(word))
+                        score += 25;
+                    if (categoryName.includes(word))
+                        score += 20;
+                    if (productDesc.includes(word))
+                        score += 10;
+                    const nameWords = productName.split(/\s+/);
+                    const brandWords = productBrand.split(/\s+/);
+                    const categoryWords = categoryName.split(/\s+/);
+                    nameWords.forEach(nameWord => {
+                        if (this.isSimilar(word, nameWord))
+                            score += 15;
+                    });
+                    brandWords.forEach(brandWord => {
+                        if (this.isSimilar(word, brandWord))
+                            score += 12;
+                    });
+                    categoryWords.forEach(catWord => {
+                        if (this.isSimilar(word, catWord))
+                            score += 10;
+                    });
+                });
+                return { product, score };
+            })
+                .filter(item => item.score > 0)
+                .sort((a, b) => b.score - a.score)
+                .map(item => item.product);
+            this.logger.log(`[${searchId}] Found ${scoredProducts.length} matching products`);
+            if (scoredProducts.length > 0) {
+                this.logger.debug(`[${searchId}] Top 3 results:`, scoredProducts.slice(0, 3).map(p => ({ id: p.id, name: p.name, brand: p.brand })));
+            }
+            return scoredProducts;
+        }
+        catch (error) {
+            this.logger.error(`[${searchId}] Search failed: ${error.message}`, error.stack);
+            throw error;
+        }
+    }
+    isSimilar(str1, str2) {
+        if (str1 === str2)
+            return true;
+        if (Math.abs(str1.length - str2.length) > 2)
+            return false;
+        if (str1.length < 3 || str2.length < 3)
+            return false;
+        const maxLength = Math.max(str1.length, str2.length);
+        let differences = 0;
+        for (let i = 0; i < maxLength; i++) {
+            if (str1[i] !== str2[i])
+                differences++;
+            if (differences > 2)
+                return false;
+        }
+        return differences <= 2;
+    }
 };
 exports.ProductsService = ProductsService;
 exports.ProductsService = ProductsService = ProductsService_1 = __decorate([

@@ -32,6 +32,11 @@ export class OrdersController {
     return this.ordersService.getSalesByCategory();
   }
 
+  @Post('sync-vendor-orders')
+  syncVendorOrders() {
+    return this.ordersService.syncAllVendorOrders();
+  }
+
   @Get('user')
   getUserOrders(@Request() req: any) {
     // Get userId from authenticated request or query parameter for development

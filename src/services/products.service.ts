@@ -188,4 +188,123 @@ export class ProductsService {
       outOfStockProducts,
     };
   }
+
+  /**
+   * Advanced search with fuzzy matching
+   * Searches across product name, description, brand, and category name
+   * Handles misspellings using case-insensitive partial matching
+   */
+  async search(query: string) {
+    const searchId = `search_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+    this.logger.log(`[${searchId}] Searching products with query: "${query}"`);
+
+    // Normalize the search query (lowercase, trim)
+    const normalizedQuery = query.toLowerCase().trim();
+    
+    // Split query into words for better matching
+    const searchWords = normalizedQuery.split(/\s+/).filter(word => word.length > 0);
+    
+    this.logger.debug(`[${searchId}] Search words:`, searchWords);
+
+    try {
+      // Get all products with related data
+      const allProducts = await this.prisma.product.findMany({
+        where: {
+          isActive: true, // Only search active products
+        },
+        include: {
+          vendor: true,
+          category: true,
+          reviews: true,
+        },
+      });
+
+      this.logger.debug(`[${searchId}] Total active products: ${allProducts.length}`);
+
+      // Filter and score products based on relevance
+      const scoredProducts = allProducts
+        .map(product => {
+          let score = 0;
+          const productName = (product.name || '').toLowerCase();
+          const productDesc = (product.description || '').toLowerCase();
+          const productBrand = (product.brand || '').toLowerCase();
+          const categoryName = (product.category?.name || '').toLowerCase();
+
+          // Check each search word
+          searchWords.forEach(word => {
+            // Exact matches get higher scores
+            if (productName === word) score += 100;
+            if (productBrand === word) score += 90;
+            if (categoryName === word) score += 80;
+
+            // Starts with match
+            if (productName.startsWith(word)) score += 50;
+            if (productBrand.startsWith(word)) score += 45;
+            if (categoryName.startsWith(word)) score += 40;
+
+            // Contains match (fuzzy matching for misspellings)
+            if (productName.includes(word)) score += 30;
+            if (productBrand.includes(word)) score += 25;
+            if (categoryName.includes(word)) score += 20;
+            if (productDesc.includes(word)) score += 10;
+
+            // Levenshtein distance for typo tolerance (simple version)
+            // Check if word is similar to product name words
+            const nameWords = productName.split(/\s+/);
+            const brandWords = productBrand.split(/\s+/);
+            const categoryWords = categoryName.split(/\s+/);
+
+            nameWords.forEach(nameWord => {
+              if (this.isSimilar(word, nameWord)) score += 15;
+            });
+            brandWords.forEach(brandWord => {
+              if (this.isSimilar(word, brandWord)) score += 12;
+            });
+            categoryWords.forEach(catWord => {
+              if (this.isSimilar(word, catWord)) score += 10;
+            });
+          });
+
+          return { product, score };
+        })
+        .filter(item => item.score > 0) // Only include products with matches
+        .sort((a, b) => b.score - a.score) // Sort by relevance score
+        .map(item => item.product); // Extract products
+
+      this.logger.log(`[${searchId}] Found ${scoredProducts.length} matching products`);
+      
+      if (scoredProducts.length > 0) {
+        this.logger.debug(`[${searchId}] Top 3 results:`, 
+          scoredProducts.slice(0, 3).map(p => ({ id: p.id, name: p.name, brand: p.brand }))
+        );
+      }
+
+      return scoredProducts;
+
+    } catch (error) {
+      this.logger.error(`[${searchId}] Search failed: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
+  /**
+   * Simple similarity check for typo tolerance
+   * Returns true if strings are similar (allowing 1-2 character differences)
+   */
+  private isSimilar(str1: string, str2: string): boolean {
+    if (str1 === str2) return true;
+    if (Math.abs(str1.length - str2.length) > 2) return false;
+    if (str1.length < 3 || str2.length < 3) return false;
+
+    // Calculate simple edit distance
+    const maxLength = Math.max(str1.length, str2.length);
+    let differences = 0;
+
+    for (let i = 0; i < maxLength; i++) {
+      if (str1[i] !== str2[i]) differences++;
+      if (differences > 2) return false; // Allow up to 2 character differences
+    }
+
+    return differences <= 2;
+  }
 }

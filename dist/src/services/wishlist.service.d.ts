@@ -4,8 +4,8 @@ export declare class WishlistService {
     constructor(prisma: PrismaService);
     getUserWishlist(userId: string): Promise<({
         product: {
-            name: string;
             id: string;
+            name: string;
             createdAt: Date;
             updatedAt: Date;
             description: string;
@@ -35,8 +35,8 @@ export declare class WishlistService {
     })[]>;
     addToWishlist(userId: string, productId: string): Promise<{
         product: {
-            name: string;
             id: string;
+            name: string;
             createdAt: Date;
             updatedAt: Date;
             description: string;

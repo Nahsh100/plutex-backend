@@ -154,12 +154,25 @@ export class OrdersService {
       await this.rebuildVendorOrders(id);
     }
 
-    // If payment status changed, propagate to vendor sub-orders
+    // Sync payment status and order status to vendor sub-orders
+    const vendorOrderUpdate: any = {};
+    
     if (updateOrderDto.paymentStatus) {
+      vendorOrderUpdate.paymentStatus = updateOrderDto.paymentStatus as PaymentStatus;
+    }
+    
+    if (updateOrderDto.status) {
+      vendorOrderUpdate.status = updateOrderDto.status as OrderStatus;
+    }
+    
+    // Update vendor orders if there are changes to sync
+    if (Object.keys(vendorOrderUpdate).length > 0) {
       await this.prisma.vendorOrder.updateMany({
         where: { orderId: id },
-        data: { paymentStatus: updateOrderDto.paymentStatus as PaymentStatus },
+        data: vendorOrderUpdate,
       });
+      
+      console.log(`Synced vendor orders for order ${id}:`, vendorOrderUpdate);
     }
 
     // Send real-time update if status changed
@@ -353,5 +366,37 @@ export class OrdersService {
     await this.prisma.orderItem.updateMany({ where: { orderId }, data: { vendorOrderId: null } });
     await this.prisma.vendorOrder.deleteMany({ where: { orderId } });
     await this.createVendorOrdersForOrder(orderId);
+  }
+
+  // Utility method to sync all vendor orders with their parent orders
+  async syncAllVendorOrders() {
+    console.log('Starting sync of all vendor orders with parent orders...');
+    
+    const orders = await this.prisma.order.findMany({
+      select: {
+        id: true,
+        status: true,
+        paymentStatus: true,
+      },
+    });
+
+    let syncedCount = 0;
+    for (const order of orders) {
+      const result = await this.prisma.vendorOrder.updateMany({
+        where: { orderId: order.id },
+        data: {
+          status: order.status as OrderStatus,
+          paymentStatus: order.paymentStatus as PaymentStatus,
+        },
+      });
+      
+      if (result.count > 0) {
+        syncedCount += result.count;
+        console.log(`Synced ${result.count} vendor orders for order ${order.id}`);
+      }
+    }
+
+    console.log(`Sync complete! Updated ${syncedCount} vendor orders across ${orders.length} orders.`);
+    return { syncedOrders: orders.length, syncedVendorOrders: syncedCount };
   }
 }

@@ -9,6 +9,7 @@ export declare enum UserRole {
     VENDOR = "VENDOR"
 }
 export declare class CreateUserDto {
+    id?: string;
     name: string;
     email: string;
     phone: string;

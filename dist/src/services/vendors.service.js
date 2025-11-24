@@ -44,6 +44,18 @@ let VendorsService = class VendorsService {
         }
         return vendor;
     }
+    async findByEmail(email) {
+        const vendor = await this.prisma.vendor.findUnique({
+            where: { email },
+            include: {
+                products: true,
+            },
+        });
+        if (!vendor) {
+            throw new common_1.NotFoundException(`Vendor with email ${email} not found`);
+        }
+        return vendor;
+    }
     async update(id, updateVendorDto) {
         return this.prisma.vendor.update({
             where: { id },
@@ -79,54 +91,114 @@ let VendorsService = class VendorsService {
         if (!vendor) {
             throw new common_1.NotFoundException(`Vendor with ID ${vendorId} not found`);
         }
-        const [totalProducts, activeProducts, totalOrders, totalRevenue, pendingOrders, shippedOrders, deliveredOrders, totalCustomers] = await Promise.all([
-            this.prisma.product.count({ where: { vendorId } }),
-            this.prisma.product.count({ where: { vendorId, isActive: true } }),
-            this.prisma.vendorOrder.count({ where: { vendorId } }),
-            this.prisma.vendorOrder.aggregate({
-                where: {
-                    vendorId,
-                    paymentStatus: 'PAID'
-                },
-                _sum: { vendorEarnings: true }
-            }).then(result => result._sum.vendorEarnings || 0),
-            this.prisma.vendorOrder.count({
-                where: {
-                    vendorId,
-                    order: { status: 'PENDING' }
-                }
-            }),
-            this.prisma.vendorOrder.count({
-                where: {
-                    vendorId,
-                    order: { status: 'SHIPPED' }
-                }
-            }),
-            this.prisma.vendorOrder.count({
-                where: {
-                    vendorId,
-                    order: { status: 'DELIVERED' }
-                }
-            }),
-            this.prisma.vendorOrder.findMany({
+        try {
+            const allVendorOrders = await this.prisma.vendorOrder.findMany({
                 where: { vendorId },
-                include: { order: { select: { userId: true } } },
-                distinct: ['orderId']
-            }).then(orders => {
-                const uniqueUserIds = new Set(orders.map(vo => vo.order.userId));
-                return uniqueUserIds.size;
-            })
-        ]);
-        return {
-            totalProducts,
-            activeProducts,
-            totalOrders,
-            totalRevenue,
-            pendingOrders,
-            shippedOrders,
-            deliveredOrders,
-            totalCustomers
-        };
+                select: {
+                    id: true,
+                    paymentStatus: true,
+                    vendorEarnings: true,
+                    total: true,
+                    subtotal: true
+                }
+            });
+            console.log(`Vendor ${vendorId} - All vendor orders:`, allVendorOrders);
+            console.log(`Vendor ${vendorId} - PAID orders:`, allVendorOrders.filter(o => o.paymentStatus === 'PAID'));
+            const [totalProducts, activeProducts, totalOrders, totalRevenue, vendorOrdersWithStatus, vendorOrdersWithUser] = await Promise.all([
+                this.prisma.product.count({ where: { vendorId } }),
+                this.prisma.product.count({ where: { vendorId, isActive: true } }),
+                this.prisma.vendorOrder.count({ where: { vendorId } }),
+                this.prisma.vendorOrder.aggregate({
+                    where: {
+                        vendorId,
+                        paymentStatus: 'PAID',
+                        status: 'DELIVERED'
+                    },
+                    _sum: { vendorEarnings: true }
+                }).then(result => {
+                    console.log(`Vendor ${vendorId} - Revenue aggregate result (PAID + DELIVERED):`, result);
+                    return result._sum.vendorEarnings || 0;
+                }),
+                this.prisma.vendorOrder.findMany({
+                    where: { vendorId },
+                    include: { order: { select: { status: true } } }
+                }),
+                this.prisma.vendorOrder.findMany({
+                    where: { vendorId },
+                    include: { order: { select: { userId: true } } },
+                    distinct: ['orderId']
+                })
+            ]);
+            const pendingOrders = vendorOrdersWithStatus.filter(vo => vo.order.status === 'PENDING').length;
+            const shippedOrders = vendorOrdersWithStatus.filter(vo => vo.order.status === 'SHIPPED').length;
+            const deliveredOrders = vendorOrdersWithStatus.filter(vo => vo.order.status === 'DELIVERED').length;
+            const uniqueUserIds = new Set(vendorOrdersWithUser.map(vo => vo.order.userId));
+            const totalCustomers = uniqueUserIds.size;
+            let finalRevenue = totalRevenue;
+            if (totalRevenue === 0 && totalOrders === 0) {
+                console.log(`Vendor ${vendorId} - No vendor orders found, checking regular orders...`);
+                const ordersWithVendorProducts = await this.prisma.order.findMany({
+                    where: {
+                        paymentStatus: 'PAID',
+                        items: {
+                            some: {
+                                product: { vendorId }
+                            }
+                        }
+                    },
+                    include: {
+                        items: {
+                            where: {
+                                product: { vendorId }
+                            },
+                            include: {
+                                product: true
+                            }
+                        }
+                    }
+                });
+                finalRevenue = ordersWithVendorProducts.reduce((total, order) => {
+                    const orderTotal = order.items.reduce((sum, item) => {
+                        return sum + (item.price * item.quantity);
+                    }, 0);
+                    return total + orderTotal;
+                }, 0);
+                console.log(`Vendor ${vendorId} - Calculated revenue from regular orders:`, finalRevenue);
+            }
+            console.log(`Vendor ${vendorId} - Final stats:`, {
+                totalProducts,
+                activeProducts,
+                totalOrders,
+                totalRevenue: finalRevenue,
+                pendingOrders,
+                shippedOrders,
+                deliveredOrders,
+                totalCustomers
+            });
+            return {
+                totalProducts,
+                activeProducts,
+                totalOrders,
+                totalRevenue: finalRevenue,
+                pendingOrders,
+                shippedOrders,
+                deliveredOrders,
+                totalCustomers
+            };
+        }
+        catch (error) {
+            console.error('Error getting vendor dashboard stats:', error);
+            return {
+                totalProducts: 0,
+                activeProducts: 0,
+                totalOrders: 0,
+                totalRevenue: 0,
+                pendingOrders: 0,
+                shippedOrders: 0,
+                deliveredOrders: 0,
+                totalCustomers: 0
+            };
+        }
     }
     async getVendorOrders(vendorId) {
         const vendor = await this.prisma.vendor.findUnique({
@@ -161,31 +233,51 @@ let VendorsService = class VendorsService {
         if (!vendor) {
             throw new common_1.NotFoundException(`Vendor with ID ${vendorId} not found`);
         }
-        const sixMonthsAgo = new Date();
-        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-        const revenueData = await this.prisma.vendorOrder.findMany({
-            where: {
-                vendorId,
-                paymentStatus: 'PAID',
-                createdAt: { gte: sixMonthsAgo }
-            },
-            select: {
-                vendorEarnings: true,
-                createdAt: true
+        try {
+            const sixMonthsAgo = new Date();
+            sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+            const revenueData = await this.prisma.vendorOrder.findMany({
+                where: {
+                    vendorId,
+                    paymentStatus: 'PAID',
+                    status: 'DELIVERED',
+                    createdAt: { gte: sixMonthsAgo }
+                },
+                select: {
+                    vendorEarnings: true,
+                    createdAt: true
+                }
+            });
+            const monthlyRevenue = revenueData.reduce((acc, order) => {
+                const month = order.createdAt.toISOString().substring(0, 7);
+                acc[month] = (acc[month] || 0) + order.vendorEarnings;
+                return acc;
+            }, {});
+            const months = [];
+            for (let i = 5; i >= 0; i--) {
+                const date = new Date();
+                date.setMonth(date.getMonth() - i);
+                const monthKey = date.toISOString().substring(0, 7);
+                months.push({
+                    month: date.toLocaleDateString('en-US', { month: 'short' }),
+                    revenue: monthlyRevenue[monthKey] || 0
+                });
             }
-        });
-        const monthlyRevenue = revenueData.reduce((acc, order) => {
-            const month = order.createdAt.toISOString().substring(0, 7);
-            acc[month] = (acc[month] || 0) + order.vendorEarnings;
-            return acc;
-        }, {});
-        const chartData = Object.entries(monthlyRevenue)
-            .map(([month, revenue]) => ({
-            month: new Date(month + '-01').toLocaleDateString('en-US', { month: 'short' }),
-            revenue
-        }))
-            .sort((a, b) => a.month.localeCompare(b.month));
-        return chartData;
+            return months;
+        }
+        catch (error) {
+            console.error('Error getting vendor revenue stats:', error);
+            const months = [];
+            for (let i = 5; i >= 0; i--) {
+                const date = new Date();
+                date.setMonth(date.getMonth() - i);
+                months.push({
+                    month: date.toLocaleDateString('en-US', { month: 'short' }),
+                    revenue: 0
+                });
+            }
+            return months;
+        }
     }
     async getVendorSalesByCategory(vendorId) {
         const vendor = await this.prisma.vendor.findUnique({
@@ -194,40 +286,52 @@ let VendorsService = class VendorsService {
         if (!vendor) {
             throw new common_1.NotFoundException(`Vendor with ID ${vendorId} not found`);
         }
-        const salesData = await this.prisma.vendorOrder.findMany({
-            where: {
-                vendorId,
-                paymentStatus: 'PAID'
-            },
-            include: {
-                items: {
-                    include: {
-                        product: {
-                            include: {
-                                category: true
+        try {
+            const salesData = await this.prisma.vendorOrder.findMany({
+                where: {
+                    vendorId,
+                    paymentStatus: 'PAID',
+                    status: 'DELIVERED'
+                },
+                include: {
+                    items: {
+                        include: {
+                            product: {
+                                include: {
+                                    category: true
+                                }
                             }
                         }
                     }
                 }
-            }
-        });
-        const categoryTotals = salesData.reduce((acc, vendorOrder) => {
-            vendorOrder.items.forEach(item => {
-                const categoryName = item.product.category?.name || 'Uncategorized';
-                const itemTotal = item.price * item.quantity;
-                acc[categoryName] = (acc[categoryName] || 0) + itemTotal;
             });
-            return acc;
-        }, {});
-        const total = Object.values(categoryTotals).reduce((sum, amount) => sum + amount, 0);
-        const chartData = Object.entries(categoryTotals)
-            .map(([name, value]) => ({
-            name,
-            value: total > 0 ? Math.round((value / total) * 100) : 0,
-            amount: value
-        }))
-            .sort((a, b) => b.value - a.value);
-        return chartData;
+            const categoryTotals = salesData.reduce((acc, vendorOrder) => {
+                vendorOrder.items.forEach(item => {
+                    if (item.product && item.product.category) {
+                        const categoryName = item.product.category.name || 'Uncategorized';
+                        const itemTotal = item.price * item.quantity;
+                        acc[categoryName] = (acc[categoryName] || 0) + itemTotal;
+                    }
+                });
+                return acc;
+            }, {});
+            if (Object.keys(categoryTotals).length === 0) {
+                return [];
+            }
+            const total = Object.values(categoryTotals).reduce((sum, amount) => sum + amount, 0);
+            const chartData = Object.entries(categoryTotals)
+                .map(([name, value]) => ({
+                name,
+                value: total > 0 ? Math.round((value / total) * 100) : 0,
+                amount: value
+            }))
+                .sort((a, b) => b.amount - a.amount);
+            return chartData;
+        }
+        catch (error) {
+            console.error('Error getting vendor sales by category:', error);
+            return [];
+        }
     }
 };
 exports.VendorsService = VendorsService;

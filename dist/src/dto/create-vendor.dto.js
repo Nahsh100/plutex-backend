@@ -17,6 +17,7 @@ var VendorStatus;
     VendorStatus["INACTIVE"] = "INACTIVE";
     VendorStatus["PENDING"] = "PENDING";
     VendorStatus["SUSPENDED"] = "SUSPENDED";
+    VendorStatus["REJECTED"] = "REJECTED";
 })(VendorStatus || (exports.VendorStatus = VendorStatus = {}));
 class CreateVendorDto {
 }
@@ -73,6 +74,31 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateVendorDto.prototype, "taxId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateVendorDto.prototype, "idType", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateVendorDto.prototype, "idNumber", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateVendorDto.prototype, "registrationNumber", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateVendorDto.prototype, "documentUrl", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateVendorDto.prototype, "internalNotes", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsBoolean)(),

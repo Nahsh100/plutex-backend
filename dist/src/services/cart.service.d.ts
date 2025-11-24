@@ -8,22 +8,27 @@ export declare class CartService {
         items: ({
             product: {
                 vendor: {
+                    id: string;
                     name: string;
                     email: string;
                     phone: string;
                     address: string;
                     city: string;
-                    state: string;
-                    zipCode: string;
+                    state: string | null;
+                    zipCode: string | null;
                     country: string;
                     status: import(".prisma/client").$Enums.VendorStatus;
-                    id: string;
                     createdAt: Date;
                     updatedAt: Date;
                     description: string | null;
                     website: string | null;
                     businessType: string | null;
                     taxId: string | null;
+                    idType: string | null;
+                    idNumber: string | null;
+                    registrationNumber: string | null;
+                    documentUrl: string | null;
+                    internalNotes: string | null;
                     isVerified: boolean;
                     rating: number;
                     reviewCount: number;
@@ -31,8 +36,8 @@ export declare class CartService {
                     location: string | null;
                 };
                 category: {
-                    name: string;
                     id: string;
+                    name: string;
                     createdAt: Date;
                     updatedAt: Date;
                     description: string | null;
@@ -45,8 +50,8 @@ export declare class CartService {
                     sortOrder: number;
                 };
             } & {
-                name: string;
                 id: string;
+                name: string;
                 createdAt: Date;
                 updatedAt: Date;
                 description: string;
@@ -79,22 +84,27 @@ export declare class CartService {
         savedItems: ({
             product: {
                 vendor: {
+                    id: string;
                     name: string;
                     email: string;
                     phone: string;
                     address: string;
                     city: string;
-                    state: string;
-                    zipCode: string;
+                    state: string | null;
+                    zipCode: string | null;
                     country: string;
                     status: import(".prisma/client").$Enums.VendorStatus;
-                    id: string;
                     createdAt: Date;
                     updatedAt: Date;
                     description: string | null;
                     website: string | null;
                     businessType: string | null;
                     taxId: string | null;
+                    idType: string | null;
+                    idNumber: string | null;
+                    registrationNumber: string | null;
+                    documentUrl: string | null;
+                    internalNotes: string | null;
                     isVerified: boolean;
                     rating: number;
                     reviewCount: number;
@@ -102,8 +112,8 @@ export declare class CartService {
                     location: string | null;
                 };
                 category: {
-                    name: string;
                     id: string;
+                    name: string;
                     createdAt: Date;
                     updatedAt: Date;
                     description: string | null;
@@ -116,8 +126,8 @@ export declare class CartService {
                     sortOrder: number;
                 };
             } & {
-                name: string;
                 id: string;
+                name: string;
                 createdAt: Date;
                 updatedAt: Date;
                 description: string;
@@ -149,22 +159,27 @@ export declare class CartService {
     addToCart(userId: string, addToCartDto: AddToCartDto): Promise<{
         product: {
             vendor: {
+                id: string;
                 name: string;
                 email: string;
                 phone: string;
                 address: string;
                 city: string;
-                state: string;
-                zipCode: string;
+                state: string | null;
+                zipCode: string | null;
                 country: string;
                 status: import(".prisma/client").$Enums.VendorStatus;
-                id: string;
                 createdAt: Date;
                 updatedAt: Date;
                 description: string | null;
                 website: string | null;
                 businessType: string | null;
                 taxId: string | null;
+                idType: string | null;
+                idNumber: string | null;
+                registrationNumber: string | null;
+                documentUrl: string | null;
+                internalNotes: string | null;
                 isVerified: boolean;
                 rating: number;
                 reviewCount: number;
@@ -172,8 +187,8 @@ export declare class CartService {
                 location: string | null;
             };
             category: {
-                name: string;
                 id: string;
+                name: string;
                 createdAt: Date;
                 updatedAt: Date;
                 description: string | null;
@@ -186,8 +201,8 @@ export declare class CartService {
                 sortOrder: number;
             };
         } & {
-            name: string;
             id: string;
+            name: string;
             createdAt: Date;
             updatedAt: Date;
             description: string;
@@ -220,22 +235,27 @@ export declare class CartService {
     updateCartItem(userId: string, itemId: string, updateCartItemDto: UpdateCartItemDto): Promise<{
         product: {
             vendor: {
+                id: string;
                 name: string;
                 email: string;
                 phone: string;
                 address: string;
                 city: string;
-                state: string;
-                zipCode: string;
+                state: string | null;
+                zipCode: string | null;
                 country: string;
                 status: import(".prisma/client").$Enums.VendorStatus;
-                id: string;
                 createdAt: Date;
                 updatedAt: Date;
                 description: string | null;
                 website: string | null;
                 businessType: string | null;
                 taxId: string | null;
+                idType: string | null;
+                idNumber: string | null;
+                registrationNumber: string | null;
+                documentUrl: string | null;
+                internalNotes: string | null;
                 isVerified: boolean;
                 rating: number;
                 reviewCount: number;
@@ -243,8 +263,8 @@ export declare class CartService {
                 location: string | null;
             };
             category: {
-                name: string;
                 id: string;
+                name: string;
                 createdAt: Date;
                 updatedAt: Date;
                 description: string | null;
@@ -257,8 +277,8 @@ export declare class CartService {
                 sortOrder: number;
             };
         } & {
-            name: string;
             id: string;
+            name: string;
             createdAt: Date;
             updatedAt: Date;
             description: string;
@@ -297,22 +317,27 @@ export declare class CartService {
     moveToCart(userId: string, productId: string): Promise<{
         product: {
             vendor: {
+                id: string;
                 name: string;
                 email: string;
                 phone: string;
                 address: string;
                 city: string;
-                state: string;
-                zipCode: string;
+                state: string | null;
+                zipCode: string | null;
                 country: string;
                 status: import(".prisma/client").$Enums.VendorStatus;
-                id: string;
                 createdAt: Date;
                 updatedAt: Date;
                 description: string | null;
                 website: string | null;
                 businessType: string | null;
                 taxId: string | null;
+                idType: string | null;
+                idNumber: string | null;
+                registrationNumber: string | null;
+                documentUrl: string | null;
+                internalNotes: string | null;
                 isVerified: boolean;
                 rating: number;
                 reviewCount: number;
@@ -320,8 +345,8 @@ export declare class CartService {
                 location: string | null;
             };
             category: {
-                name: string;
                 id: string;
+                name: string;
                 createdAt: Date;
                 updatedAt: Date;
                 description: string | null;
@@ -334,8 +359,8 @@ export declare class CartService {
                 sortOrder: number;
             };
         } & {
-            name: string;
             id: string;
+            name: string;
             createdAt: Date;
             updatedAt: Date;
             description: string;

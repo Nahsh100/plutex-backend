@@ -39,9 +39,7 @@ async function bootstrap() {
     app.use((0, express_1.urlencoded)({ extended: true, limit: '50mb' }));
     const defaultOrigins = [
         'http://localhost:3000',
-        'http://localhost:3001',
-        'http://localhost:8083',
-        'http://localhost:19006',
+        'http://10.3.91.214:3000',
         'https://plutex-admin-production.up.railway.app',
         'https://plutex-admin.vercel.app',
         'https://plutex.co.zm',
@@ -53,11 +51,13 @@ async function bootstrap() {
         ? envOrigins.split(',').map(o => o.trim()).filter(Boolean)
         : [];
     const allowedOrigins = parsedEnvOrigins.length > 0 ? parsedEnvOrigins : defaultOrigins;
+    const isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
     app.enableCors({
         origin: (origin, callback) => {
             if (!origin)
                 return callback(null, true);
-            if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) {
+            if (isDevelopment) {
+                console.log(`✅ CORS allowed (dev mode): ${origin}`);
                 return callback(null, true);
             }
             const isAllowed = allowedOrigins.some(allowedOrigin => {
@@ -71,16 +71,18 @@ async function bootstrap() {
                 return false;
             });
             if (isAllowed) {
+                console.log(`✅ CORS allowed: ${origin}`);
                 callback(null, true);
             }
             else {
-                console.log(`CORS blocked origin: ${origin}`);
+                console.log(`❌ CORS blocked origin: ${origin}`);
                 callback(null, false);
             }
         },
         credentials: true,
         methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+        exposedHeaders: ['Content-Range', 'X-Content-Range'],
         preflightContinue: false,
         optionsSuccessStatus: 204,
     });
@@ -97,7 +99,8 @@ async function bootstrap() {
     await app.listen(port);
     console.log(`🚀 Plutex Backend is running on: http://localhost:${port}`);
     console.log(`📚 API Documentation: http://localhost:${port}/api`);
-    console.log(`🌐 CORS enabled for: ${allowedOrigins.join(', ')}`);
+    console.log(`🔧 Environment: ${isDevelopment ? 'DEVELOPMENT' : 'PRODUCTION'}`);
+    console.log(`🌐 CORS enabled for: ${isDevelopment ? 'ALL ORIGINS (dev mode)' : allowedOrigins.join(', ')}`);
     console.log(`🗄️  Database URL: ${process.env.DATABASE_URL || 'file:./dev.db (SQLite)'}`);
     if (process.env.DATABASE_URL) {
         const dbUrl = process.env.DATABASE_URL;

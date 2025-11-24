@@ -36,6 +36,9 @@ let OrdersController = class OrdersController {
     getSalesByCategory() {
         return this.ordersService.getSalesByCategory();
     }
+    syncVendorOrders() {
+        return this.ordersService.syncAllVendorOrders();
+    }
     getUserOrders(req) {
         const userId = req.user?.id || req.query?.userId;
         if (userId) {
@@ -85,6 +88,12 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], OrdersController.prototype, "getSalesByCategory", null);
+__decorate([
+    (0, common_1.Post)('sync-vendor-orders'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], OrdersController.prototype, "syncVendorOrders", null);
 __decorate([
     (0, common_1.Get)('user'),
     __param(0, (0, common_1.Request)()),

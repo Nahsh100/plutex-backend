@@ -102,6 +102,33 @@ export class UsersService {
     });
   }
 
+  async updateRole(id: string, role: string) {
+    // Validate role
+    if (!Object.values(UserRole).includes(role as UserRole)) {
+      throw new Error(`Invalid role: ${role}`);
+    }
+
+    const user = await this.prisma.user.update({
+      where: { id },
+      data: { role: role as UserRole },
+      include: {
+        orders: true,
+        reviews: true,
+      },
+    });
+
+    this.logger.log(`User ${id} role updated to ${role}`);
+    
+    // Note: To sync with Clerk, you would need to use Clerk's Backend API
+    // Example (requires @clerk/backend package):
+    // import { clerkClient } from '@clerk/backend';
+    // await clerkClient.users.updateUserMetadata(id, {
+    //   publicMetadata: { role }
+    // });
+    
+    return user;
+  }
+
   async remove(id: string) {
     await this.prisma.user.delete({
       where: { id },
