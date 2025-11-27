@@ -45,6 +45,7 @@ let ReviewsService = class ReviewsService {
             data: {
                 ...createReviewDto,
                 userId,
+                status: 'APPROVED',
             },
             include: {
                 user: {
@@ -213,7 +214,7 @@ let ReviewsService = class ReviewsService {
         });
     }
     async getProductReviews(productId, page = 1, limit = 10) {
-        return this.findAll(productId, 'APPROVED', page, limit);
+        return this.findAll(productId, undefined, page, limit);
     }
     async getUserReviews(userId, page = 1, limit = 10) {
         const skip = (page - 1) * limit;

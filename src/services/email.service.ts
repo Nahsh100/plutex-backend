@@ -1,93 +1,553 @@
 import { Injectable } from '@nestjs/common';
 import { Resend } from 'resend';
+import * as PDFDocument from 'pdfkit';
+import { Order, OrderItem, User, Vendor } from '@prisma/client';
+
+interface OrderWithDetails extends Order {
+  items?: (OrderItem & {
+    product?: {
+      name: string;
+      price: number;
+      images?: string[];
+    };
+  })[];
+  user?: User;
+}
 
 @Injectable()
 export class EmailService {
   private resend: Resend;
+  private fromEmail: string;
 
   constructor() {
-    this.resend = new Resend(process.env.RESEND_API_KEY);
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      console.warn('RESEND_API_KEY not set. Email functionality will be disabled.');
+    }
+    this.resend = new Resend(apiKey);
+    this.fromEmail = process.env.FROM_EMAIL || 'orders@plutex.com';
   }
 
-  async sendPasswordResetEmail(to: string, resetToken: string): Promise<void> {
-    const resetUrl = `${process.env.FRONTEND_URL}reset-password?token=${resetToken}`;
-    
+  /**
+   * Generate PDF receipt for an order
+   */
+  async generateOrderReceipt(order: OrderWithDetails): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const doc = new PDFDocument({ margin: 50 });
+      const chunks: Buffer[] = [];
+
+      doc.on('data', (chunk) => chunks.push(chunk));
+      doc.on('end', () => resolve(Buffer.concat(chunks)));
+      doc.on('error', reject);
+
+      // Header
+      doc.fontSize(20).text('PLUTEX', { align: 'center' });
+      doc.fontSize(10).text('Order Receipt', { align: 'center' });
+      doc.moveDown();
+
+      // Order Information
+      doc.fontSize(12).font('Helvetica-Bold').text(`Order Number: ${order.orderNumber}`);
+      doc.fontSize(10).text(`Order Date: ${new Date(order.createdAt).toLocaleDateString()}`);
+      doc.text(`Payment Status: ${order.paymentStatus}`);
+      doc.text(`Order Status: ${order.status}`);
+      doc.moveDown();
+
+      // Customer Information
+      doc.fontSize(12).text('Customer Information:', { underline: true });
+      const shippingAddr = order.shippingAddress as any;
+      if (shippingAddr) {
+        doc.fontSize(10).text(`Name: ${shippingAddr.fullName || 'N/A'}`);
+        doc.text(`Email: ${shippingAddr.email || order.user?.email || 'N/A'}`);
+        doc.text(`Phone: ${shippingAddr.phone || 'N/A'}`);
+        doc.text(`Address: ${shippingAddr.address || 'N/A'}`);
+        doc.text(`City: ${shippingAddr.city || 'N/A'}, ${shippingAddr.state || ''} ${shippingAddr.zipCode || ''}`);
+        doc.text(`Country: ${shippingAddr.country || 'N/A'}`);
+      }
+      doc.moveDown();
+
+      // Order Items Table
+      doc.fontSize(12).text('Order Items:', { underline: true });
+      doc.moveDown(0.5);
+
+      // Table header
+      const tableTop = doc.y;
+      const itemX = 50;
+      const qtyX = 300;
+      const priceX = 370;
+      const totalX = 450;
+
+      doc.fontSize(10).font('Helvetica-Bold');
+      doc.text('Item', itemX, tableTop);
+      doc.text('Qty', qtyX, tableTop);
+      doc.text('Price', priceX, tableTop);
+      doc.text('Total', totalX, tableTop);
+
+      doc.moveTo(itemX, tableTop + 15).lineTo(530, tableTop + 15).stroke();
+
+      // Table rows
+      doc.font('Helvetica');
+      let currentY = tableTop + 25;
+
+      if (order.items && order.items.length > 0) {
+        order.items.forEach((item) => {
+          const itemTotal = item.price * item.quantity;
+          
+          doc.text(item.product?.name || 'Product', itemX, currentY, { width: 240 });
+          doc.text(item.quantity.toString(), qtyX, currentY);
+          doc.text(`K${item.price.toFixed(2)}`, priceX, currentY);
+          doc.text(`K${itemTotal.toFixed(2)}`, totalX, currentY);
+          
+          currentY += 25;
+        });
+      }
+
+      doc.moveTo(itemX, currentY).lineTo(530, currentY).stroke();
+      currentY += 15;
+
+      // Totals
+      doc.font('Helvetica');
+      doc.text('Subtotal:', priceX, currentY);
+      doc.text(`K${order.subtotal.toFixed(2)}`, totalX, currentY);
+      currentY += 20;
+
+      doc.text('Tax:', priceX, currentY);
+      doc.text(`K${order.tax.toFixed(2)}`, totalX, currentY);
+      currentY += 20;
+
+      doc.text('Shipping:', priceX, currentY);
+      doc.text(`K${order.shippingCost.toFixed(2)}`, totalX, currentY);
+      currentY += 20;
+
+      doc.font('Helvetica-Bold').fontSize(12);
+      doc.text('Total:', priceX, currentY);
+      doc.text(`K${order.total.toFixed(2)}`, totalX, currentY);
+
+      // Footer
+      doc.moveDown(3);
+      doc.fontSize(10).font('Helvetica').text(
+        'Thank you for your order!',
+        { align: 'center' }
+      );
+      doc.fontSize(8).text(
+        'For questions about your order, please contact support@plutex.com',
+        { align: 'center' }
+      );
+
+      doc.end();
+    });
+  }
+
+  /**
+   * Send order confirmation email to customer
+   */
+  async sendCustomerOrderConfirmation(
+    order: OrderWithDetails,
+    customerEmail: string
+  ): Promise<void> {
     try {
-      await this.resend.emails.send({
-        from: process.env.RESEND_FROM_EMAIL || 'noreply@plutex.com',
-        to: [to],
-        subject: 'Reset Your Password - Plutex',
-        html: `
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Reset Your Password</title>
-            <style>
-              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; }
-              .container { max-width: 600px; margin: 0 auto; background-color: white; }
-              .header { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); padding: 40px 20px; text-align: center; }
-              .header h1 { color: white; margin: 0; font-size: 28px; font-weight: bold; }
-              .content { padding: 40px 20px; }
-              .content h2 { color: #1f2937; margin: 0 0 20px 0; font-size: 24px; }
-              .content p { color: #6b7280; line-height: 1.6; margin: 0 0 20px 0; }
-              .button { display: inline-block; background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: white; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: 600; margin: 20px 0; }
-              .footer { background-color: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 14px; }
-              .security-note { background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; margin: 20px 0; border-radius: 4px; }
-              .security-note p { color: #92400e; margin: 0; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="header">
-                <h1>Plutex</h1>
-              </div>
-              <div class="content">
-                <h2>Reset Your Password</h2>
-                <p>Hello,</p>
-                <p>We received a request to reset your password for your Plutex account. If you didn't make this request, you can safely ignore this email.</p>
-                <p>To reset your password, click the button below:</p>
-                <a href="${resetUrl}" class="button">Reset Password</a>
-                <div class="security-note">
-                  <p><strong>Security Note:</strong> This link will expire in 1 hour for your security. If you didn't request this password reset, please contact our support team.</p>
-                </div>
-                <p>If the button doesn't work, you can copy and paste this link into your browser:</p>
-                <p style="word-break: break-all; color: #2563eb;">${resetUrl}</p>
-                <p>Best regards,<br>The Plutex Team</p>
-              </div>
-              <div class="footer">
-                <p>© 2024 Plutex. All rights reserved.</p>
-                <p>This email was sent because you requested a password reset. If you didn't request this, please contact support.</p>
-              </div>
+      const pdfReceipt = await this.generateOrderReceipt(order);
+
+      const itemsList = order.items
+        ?.map(
+          (item) =>
+            `<li>${item.product?.name || 'Product'} x ${item.quantity} - K${(
+              item.price * item.quantity
+            ).toFixed(2)}</li>`
+        )
+        .join('');
+
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #2563eb; color: white; padding: 20px; text-align: center; }
+            .content { padding: 20px; background: #f9fafb; }
+            .order-details { background: white; padding: 15px; margin: 15px 0; border-radius: 8px; }
+            .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
+            .button { display: inline-block; padding: 12px 24px; background: #2563eb; color: white; text-decoration: none; border-radius: 6px; margin: 10px 0; }
+            ul { list-style: none; padding: 0; }
+            li { padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Order Confirmation</h1>
             </div>
-          </body>
-          </html>
-        `
+            <div class="content">
+              <p>Hi ${(order.shippingAddress as any)?.fullName || 'Customer'},</p>
+              <p>Thank you for your order! We've received your order and it's being processed.</p>
+              
+              <div class="order-details">
+                <h2>Order #${order.orderNumber}</h2>
+                <p><strong>Order Date:</strong> ${new Date(order.createdAt).toLocaleDateString()}</p>
+                <p><strong>Payment Status:</strong> ${order.paymentStatus}</p>
+                <p><strong>Order Status:</strong> ${order.status}</p>
+                
+                <h3>Items Ordered:</h3>
+                <ul>
+                  ${itemsList}
+                </ul>
+                
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e5e7eb;">
+                  <p><strong>Subtotal:</strong> K${order.subtotal.toFixed(2)}</p>
+                  <p><strong>Tax:</strong> K${order.tax.toFixed(2)}</p>
+                  <p><strong>Shipping:</strong> K${order.shippingCost.toFixed(2)}</p>
+                  <p style="font-size: 18px;"><strong>Total:</strong> K${order.total.toFixed(2)}</p>
+                </div>
+              </div>
+              
+              <p style="text-align: center;">
+                <a href="${process.env.FRONTEND_URL || 'https://plutex.com'}/shop/orders/${order.id}/track" class="button">
+                  Track Your Order
+                </a>
+              </p>
+              
+              <p>You can track your order status at any time by visiting your orders page.</p>
+            </div>
+            <div class="footer">
+              <p>If you have any questions, please contact us at support@plutex.com</p>
+              <p>&copy; ${new Date().getFullYear()} Plutex. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      await this.resend.emails.send({
+        from: this.fromEmail,
+        to: customerEmail,
+        subject: `Order Confirmation - ${order.orderNumber}`,
+        html,
+        attachments: [
+          {
+            filename: `receipt-${order.orderNumber}.pdf`,
+            content: pdfReceipt,
+          },
+        ],
       });
+
+      console.log(`Order confirmation email sent to customer: ${customerEmail}`);
     } catch (error) {
-      console.error('Failed to send password reset email:', error);
-      throw new Error('Failed to send password reset email');
+      console.error('Error sending customer order confirmation:', error);
+      throw error;
     }
   }
 
-  async sendEmailVerification(to: string, verifyToken: string): Promise<void> {
-    const verifyUrl = `${process.env.FRONTEND_URL}verify-email?token=${verifyToken}`;
-    await this.resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || 'noreply@plutex.com',
-      to: [to],
-      subject: 'Verify Your Email - Plutex',
-      html: `
-        <html><body>
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-            <h2>Verify Your Email</h2>
-            <p>Welcome to Plutex! Please verify your email by clicking the link below:</p>
-            <p><a href="${verifyUrl}">Verify Email</a></p>
-            <p>If the link doesn't work, copy and paste this URL:</p>
-            <p style="word-break: break-all; color: #2563eb;">${verifyUrl}</p>
+  /**
+   * Send order notification to vendor
+   */
+  async sendVendorOrderNotification(
+    order: OrderWithDetails,
+    vendorEmail: string,
+    vendorItems: (OrderItem & {
+      product?: {
+        name: string;
+        price: number;
+        images?: string[];
+      };
+    })[]
+  ): Promise<void> {
+    try {
+      const itemsList = vendorItems
+        .map(
+          (item) =>
+            `<li>${item.product?.name || 'Product'} x ${item.quantity} - K${(
+              item.price * item.quantity
+            ).toFixed(2)}</li>`
+        )
+        .join('');
+
+      const vendorTotal = vendorItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      );
+
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #059669; color: white; padding: 20px; text-align: center; }
+            .content { padding: 20px; background: #f9fafb; }
+            .order-details { background: white; padding: 15px; margin: 15px 0; border-radius: 8px; }
+            .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
+            .button { display: inline-block; padding: 12px 24px; background: #059669; color: white; text-decoration: none; border-radius: 6px; margin: 10px 0; }
+            ul { list-style: none; padding: 0; }
+            li { padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
+            .alert { background: #fef3c7; padding: 15px; border-radius: 6px; margin: 15px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>New Order Received</h1>
+            </div>
+            <div class="content">
+              <p>Hello,</p>
+              <p>You have received a new order containing your products!</p>
+              
+              <div class="alert">
+                <strong>⚠️ Action Required:</strong> Please prepare these items for shipment.
+              </div>
+              
+              <div class="order-details">
+                <h2>Order #${order.orderNumber}</h2>
+                <p><strong>Order Date:</strong> ${new Date(order.createdAt).toLocaleDateString()}</p>
+                <p><strong>Payment Status:</strong> ${order.paymentStatus}</p>
+                
+                <h3>Your Items in This Order:</h3>
+                <ul>
+                  ${itemsList}
+                </ul>
+                
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e5e7eb;">
+                  <p style="font-size: 18px;"><strong>Your Total:</strong> K${vendorTotal.toFixed(2)}</p>
+                </div>
+                
+                <h3>Shipping Information:</h3>
+                <p>
+                  ${(order.shippingAddress as any)?.fullName || 'N/A'}<br>
+                  ${(order.shippingAddress as any)?.address || 'N/A'}<br>
+                  ${(order.shippingAddress as any)?.city || 'N/A'}, ${(order.shippingAddress as any)?.state || ''} ${(order.shippingAddress as any)?.zipCode || ''}<br>
+                  ${(order.shippingAddress as any)?.country || 'N/A'}<br>
+                  Phone: ${(order.shippingAddress as any)?.phone || 'N/A'}
+                </p>
+              </div>
+              
+              <p style="text-align: center;">
+                <a href="${process.env.FRONTEND_URL || 'https://plutex.com'}/orders" class="button">
+                  Manage Order
+                </a>
+              </p>
+              
+              <p>Please update the order status once you've shipped the items.</p>
+            </div>
+            <div class="footer">
+              <p>If you have any questions, please contact us at vendor-support@plutex.com</p>
+              <p>&copy; ${new Date().getFullYear()} Plutex. All rights reserved.</p>
+            </div>
           </div>
-        </body></html>
-      `,
-    });
+        </body>
+        </html>
+      `;
+
+      await this.resend.emails.send({
+        from: this.fromEmail,
+        to: vendorEmail,
+        subject: `New Order - ${order.orderNumber}`,
+        html,
+      });
+
+      console.log(`Order notification email sent to vendor: ${vendorEmail}`);
+    } catch (error) {
+      console.error('Error sending vendor order notification:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Send email verification email
+   */
+  async sendEmailVerification(email: string, token: string): Promise<void> {
+    try {
+      const verificationUrl = `${process.env.FRONTEND_URL || 'https://plutex.com'}/verify-email?token=${token}`;
+
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #2563eb; color: white; padding: 20px; text-align: center; }
+            .content { padding: 20px; background: #f9fafb; }
+            .button { display: inline-block; padding: 12px 24px; background: #2563eb; color: white; text-decoration: none; border-radius: 6px; margin: 10px 0; }
+            .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Verify Your Email</h1>
+            </div>
+            <div class="content">
+              <p>Thank you for registering with Plutex!</p>
+              <p>Please click the button below to verify your email address:</p>
+              <p style="text-align: center;">
+                <a href="${verificationUrl}" class="button">Verify Email</a>
+              </p>
+              <p>Or copy and paste this link into your browser:</p>
+              <p style="word-break: break-all;">${verificationUrl}</p>
+              <p>This link will expire in 24 hours.</p>
+            </div>
+            <div class="footer">
+              <p>If you didn't create an account, please ignore this email.</p>
+              <p>&copy; ${new Date().getFullYear()} Plutex. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      await this.resend.emails.send({
+        from: this.fromEmail,
+        to: email,
+        subject: 'Verify Your Email - Plutex',
+        html,
+      });
+
+      console.log(`Email verification sent to: ${email}`);
+    } catch (error) {
+      console.error('Error sending email verification:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Send password reset email
+   */
+  async sendPasswordResetEmail(email: string, token: string): Promise<void> {
+    try {
+      const resetUrl = `${process.env.FRONTEND_URL || 'https://plutex.com'}/reset-password?token=${token}`;
+
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #2563eb; color: white; padding: 20px; text-align: center; }
+            .content { padding: 20px; background: #f9fafb; }
+            .button { display: inline-block; padding: 12px 24px; background: #2563eb; color: white; text-decoration: none; border-radius: 6px; margin: 10px 0; }
+            .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
+            .warning { background: #fef3c7; padding: 15px; border-radius: 6px; margin: 15px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Password Reset Request</h1>
+            </div>
+            <div class="content">
+              <p>We received a request to reset your password for your Plutex account.</p>
+              <p>Click the button below to reset your password:</p>
+              <p style="text-align: center;">
+                <a href="${resetUrl}" class="button">Reset Password</a>
+              </p>
+              <p>Or copy and paste this link into your browser:</p>
+              <p style="word-break: break-all;">${resetUrl}</p>
+              <div class="warning">
+                <strong>⚠️ Security Notice:</strong> This link will expire in 1 hour. If you didn't request a password reset, please ignore this email.
+              </div>
+            </div>
+            <div class="footer">
+              <p>If you have any questions, please contact us at support@plutex.com</p>
+              <p>&copy; ${new Date().getFullYear()} Plutex. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      await this.resend.emails.send({
+        from: this.fromEmail,
+        to: email,
+        subject: 'Password Reset - Plutex',
+        html,
+      });
+
+      console.log(`Password reset email sent to: ${email}`);
+    } catch (error) {
+      console.error('Error sending password reset email:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Send order status update email to customer
+   */
+  async sendOrderStatusUpdate(
+    order: OrderWithDetails,
+    customerEmail: string,
+    oldStatus: string,
+    newStatus: string
+  ): Promise<void> {
+    try {
+      const statusMessages = {
+        PROCESSING: 'Your order is being processed and will be shipped soon.',
+        SHIPPED: 'Your order has been shipped! It should arrive within 3-5 business days.',
+        DELIVERED: 'Your order has been delivered. We hope you enjoy your purchase!',
+        CANCELLED: 'Your order has been cancelled. If you have any questions, please contact support.',
+      };
+
+      const message = statusMessages[newStatus] || 'Your order status has been updated.';
+
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #2563eb; color: white; padding: 20px; text-align: center; }
+            .content { padding: 20px; background: #f9fafb; }
+            .status-update { background: white; padding: 20px; margin: 15px 0; border-radius: 8px; text-align: center; }
+            .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
+            .button { display: inline-block; padding: 12px 24px; background: #2563eb; color: white; text-decoration: none; border-radius: 6px; margin: 10px 0; }
+            .status-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-weight: bold; }
+            .status-shipped { background: #dbeafe; color: #1e40af; }
+            .status-delivered { background: #d1fae5; color: #065f46; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Order Status Update</h1>
+            </div>
+            <div class="content">
+              <p>Hi ${(order.shippingAddress as any)?.fullName || 'Customer'},</p>
+              
+              <div class="status-update">
+                <h2>Order #${order.orderNumber}</h2>
+                <p>Status changed from <strong>${oldStatus}</strong> to:</p>
+                <p><span class="status-badge status-${newStatus.toLowerCase()}">${newStatus}</span></p>
+                <p style="margin-top: 20px;">${message}</p>
+                ${order.trackingNumber ? `<p><strong>Tracking Number:</strong> ${order.trackingNumber}</p>` : ''}
+              </div>
+              
+              <p style="text-align: center;">
+                <a href="${process.env.FRONTEND_URL || 'https://plutex.com'}/shop/orders/${order.id}/track" class="button">
+                  Track Your Order
+                </a>
+              </p>
+            </div>
+            <div class="footer">
+              <p>If you have any questions, please contact us at support@plutex.com</p>
+              <p>&copy; ${new Date().getFullYear()} Plutex. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      await this.resend.emails.send({
+        from: this.fromEmail,
+        to: customerEmail,
+        subject: `Order Update - ${order.orderNumber} is now ${newStatus}`,
+        html,
+      });
+
+      console.log(`Order status update email sent to: ${customerEmail}`);
+    } catch (error) {
+      console.error('Error sending order status update:', error);
+      throw error;
+    }
   }
 }

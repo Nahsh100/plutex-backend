@@ -46,6 +46,8 @@ export class ReviewsService {
       data: {
         ...createReviewDto,
         userId,
+        // Auto-approve new reviews so they are immediately visible
+        status: 'APPROVED',
       },
       include: {
         user: {
@@ -242,7 +244,8 @@ export class ReviewsService {
   }
 
   async getProductReviews(productId: string, page: number = 1, limit: number = 10) {
-    return this.findAll(productId, 'APPROVED', page, limit);
+    // Return all reviews for the product (they are created as APPROVED by default)
+    return this.findAll(productId, undefined, page, limit);
   }
 
   async getUserReviews(userId: string, page: number = 1, limit: number = 10) {

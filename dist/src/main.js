@@ -16,7 +16,11 @@ async function bootstrap() {
         next();
     });
     const requestCounts = new Map();
+    const isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
     app.use((req, res, next) => {
+        if (isDevelopment) {
+            return next();
+        }
         const ip = req.ip || req.connection.remoteAddress;
         const now = Date.now();
         const windowMs = 15 * 60 * 1000;
@@ -51,7 +55,6 @@ async function bootstrap() {
         ? envOrigins.split(',').map(o => o.trim()).filter(Boolean)
         : [];
     const allowedOrigins = parsedEnvOrigins.length > 0 ? parsedEnvOrigins : defaultOrigins;
-    const isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
     app.enableCors({
         origin: (origin, callback) => {
             if (!origin)

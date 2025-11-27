@@ -20,7 +20,14 @@ async function bootstrap() {
 
   // Simple rate limiting using built-in tracking
   const requestCounts = new Map();
+  const isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+  
   app.use((req, res, next) => {
+    // Skip rate limiting in development
+    if (isDevelopment) {
+      return next();
+    }
+    
     const ip = req.ip || req.connection.remoteAddress;
     const now = Date.now();
     const windowMs = 15 * 60 * 1000; // 15 minutes
@@ -67,7 +74,6 @@ async function bootstrap() {
   const allowedOrigins = parsedEnvOrigins.length > 0 ? parsedEnvOrigins : defaultOrigins;
 
   // Use dynamic origin function for more flexible CORS handling
-  const isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
   
   app.enableCors({
     origin: (origin: string | undefined, callback: (error: Error | null, origin?: boolean) => void) => {
