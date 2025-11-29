@@ -30,6 +30,7 @@ const websocket_service_1 = require("./services/websocket.service");
 const payouts_service_1 = require("./services/payouts.service");
 const config_service_1 = require("./services/config.service");
 const cart_service_1 = require("./services/cart.service");
+const moneyunify_service_1 = require("./services/moneyunify.service");
 const users_controller_1 = require("./controllers/users.controller");
 const products_controller_1 = require("./controllers/products.controller");
 const vendors_controller_1 = require("./controllers/vendors.controller");
@@ -37,6 +38,7 @@ const orders_controller_1 = require("./controllers/orders.controller");
 const categories_controller_1 = require("./controllers/categories.controller");
 const auth_controller_1 = require("./controllers/auth.controller");
 const payments_controller_1 = require("./controllers/payments.controller");
+const moneyunify_controller_1 = require("./controllers/moneyunify.controller");
 const wishlist_controller_1 = require("./controllers/wishlist.controller");
 const reviews_controller_1 = require("./controllers/reviews.controller");
 const search_controller_1 = require("./controllers/search.controller");
@@ -81,6 +83,7 @@ exports.AppModule = AppModule = __decorate([
             categories_controller_1.CategoriesController,
             auth_controller_1.AuthController,
             payments_controller_1.PaymentsController,
+            moneyunify_controller_1.MoneyUnifyController,
             wishlist_controller_1.WishlistController,
             reviews_controller_1.ReviewsController,
             search_controller_1.SearchController,
@@ -106,6 +109,7 @@ exports.AppModule = AppModule = __decorate([
             payouts_service_1.PayoutsService,
             config_service_1.ConfigService,
             cart_service_1.CartService,
+            moneyunify_service_1.MoneyUnifyService,
             notifications_gateway_1.NotificationsGateway,
             jwt_strategy_1.JwtStrategy,
             google_strategy_1.GoogleStrategy,

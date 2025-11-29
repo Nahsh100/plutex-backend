@@ -9,6 +9,7 @@ export declare class WishlistController {
             createdAt: Date;
             updatedAt: Date;
             description: string;
+            rating: number;
             price: number;
             originalPrice: number | null;
             brand: string;
@@ -23,15 +24,14 @@ export declare class WishlistController {
             dimensions: string | null;
             vendorId: string;
             categoryId: string;
-            rating: number;
             reviewCount: number;
             soldCount: number;
         };
     } & {
         id: string;
         createdAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
     })[]>;
     add(req: any, productId: string): Promise<{
         product: {
@@ -40,6 +40,7 @@ export declare class WishlistController {
             createdAt: Date;
             updatedAt: Date;
             description: string;
+            rating: number;
             price: number;
             originalPrice: number | null;
             brand: string;
@@ -54,15 +55,14 @@ export declare class WishlistController {
             dimensions: string | null;
             vendorId: string;
             categoryId: string;
-            rating: number;
             reviewCount: number;
             soldCount: number;
         };
     } & {
         id: string;
         createdAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
     }>;
     remove(req: any, productId: string): Promise<{
         success: boolean;

@@ -49,16 +49,28 @@ let ConfigService = class ConfigService {
     async getAppConfig() {
         const cfg = await this.prisma.appConfig.findFirst();
         if (!cfg) {
-            return await this.prisma.appConfig.create({ data: {} });
+            return (await this.prisma.appConfig.create({
+                data: {},
+            }));
         }
         return cfg;
     }
     async updateAppConfig(data) {
         const existing = await this.prisma.appConfig.findFirst();
         if (existing) {
-            return this.prisma.appConfig.update({ where: { id: existing.id }, data });
+            return (await this.prisma.appConfig.update({ where: { id: existing.id }, data }));
         }
-        return this.prisma.appConfig.create({ data: data });
+        return (await this.prisma.appConfig.create({ data: data }));
+    }
+    async getShippingDefaults() {
+        const cfg = await this.getAppConfig();
+        return {
+            defaultShippingRate: cfg.defaultShippingRate,
+            freeShippingThreshold: cfg.freeShippingThreshold,
+        };
+    }
+    async setShippingDefaults(defaultShippingRate, freeShippingThreshold) {
+        return this.updateAppConfig({ defaultShippingRate, freeShippingThreshold });
     }
     async getVendorCommissionRate(vendorId) {
         const override = await this.prisma.vendorCommission.findUnique({ where: { vendorId } });

@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { AppConfig } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+
+type AppConfigWithShipping = AppConfig & {
+  defaultShippingRate: number | null;
+  freeShippingThreshold: number | null;
+};
 
 @Injectable()
 export class ConfigService {
@@ -39,20 +45,39 @@ export class ConfigService {
     return this.prisma.appConfig.create({ data: { taxRate: rate } });
   }
 
-  async getAppConfig() {
+  async getAppConfig(): Promise<AppConfigWithShipping> {
     const cfg = await this.prisma.appConfig.findFirst();
     if (!cfg) {
-      return await this.prisma.appConfig.create({ data: {} });
+      return (await this.prisma.appConfig.create({
+        data: {},
+      })) as AppConfigWithShipping;
     }
-    return cfg;
+    return cfg as AppConfigWithShipping;
   }
 
-  async updateAppConfig(data: { commissionRate?: number; taxRate?: number }) {
+  async updateAppConfig(data: {
+    commissionRate?: number;
+    taxRate?: number;
+    defaultShippingRate?: number;
+    freeShippingThreshold?: number;
+  }): Promise<AppConfigWithShipping> {
     const existing = await this.prisma.appConfig.findFirst();
     if (existing) {
-      return this.prisma.appConfig.update({ where: { id: existing.id }, data });
+      return (await this.prisma.appConfig.update({ where: { id: existing.id }, data })) as AppConfigWithShipping;
     }
-    return this.prisma.appConfig.create({ data: data as any });
+    return (await this.prisma.appConfig.create({ data: data as any })) as AppConfigWithShipping;
+  }
+
+  async getShippingDefaults() {
+    const cfg = await this.getAppConfig();
+    return {
+      defaultShippingRate: cfg.defaultShippingRate,
+      freeShippingThreshold: cfg.freeShippingThreshold,
+    };
+  }
+
+  async setShippingDefaults(defaultShippingRate: number, freeShippingThreshold: number) {
+    return this.updateAppConfig({ defaultShippingRate, freeShippingThreshold });
   }
 
   async getVendorCommissionRate(vendorId: string): Promise<number | null> {

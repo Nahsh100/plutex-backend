@@ -32,6 +32,7 @@ export declare class SearchService {
             createdAt: Date;
             updatedAt: Date;
             description: string;
+            rating: number;
             price: number;
             originalPrice: number | null;
             brand: string;
@@ -46,7 +47,6 @@ export declare class SearchService {
             dimensions: string | null;
             vendorId: string;
             categoryId: string;
-            rating: number;
             soldCount: number;
             fuzzyScore?: number;
         }[];
@@ -113,6 +113,7 @@ export declare class SearchService {
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
+            rating: number;
             website: string | null;
             businessType: string | null;
             taxId: string | null;
@@ -122,10 +123,12 @@ export declare class SearchService {
             documentUrl: string | null;
             internalNotes: string | null;
             isVerified: boolean;
-            rating: number;
             reviewCount: number;
             logo: string | null;
             location: string | null;
+            shippingRate: number | null;
+            freeShippingThreshold: number | null;
+            shippingNotes: string | null;
         })[];
         pagination: {
             page: number;

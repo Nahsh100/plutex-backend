@@ -1,9 +1,38 @@
 import { Injectable, NotFoundException, Inject, forwardRef } from '@nestjs/common';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto, OrderStatus, PaymentStatus } from '../dto/create-order.dto';
 import { UpdateOrderDto } from '../dto/update-order.dto';
 import { WebSocketService } from './websocket.service';
 import { ConfigService } from './config.service';
+import { EmailService } from './email.service';
+
+const ORDER_NOTIFICATION_INCLUDE = {
+  user: true,
+  items: {
+    include: {
+      product: {
+        include: {
+          vendor: true,
+        },
+      },
+    },
+  },
+  vendorOrders: {
+    include: {
+      vendor: true,
+      items: {
+        include: {
+          product: true,
+        },
+      },
+    },
+  },
+} as const;
+
+type OrderWithNotifications = Prisma.OrderGetPayload<{
+  include: typeof ORDER_NOTIFICATION_INCLUDE;
+}>;
 
 @Injectable()
 export class OrdersService {
@@ -12,6 +41,7 @@ export class OrdersService {
     @Inject(forwardRef(() => WebSocketService))
     private webSocketService: WebSocketService,
     private configService: ConfigService,
+    private emailService: EmailService,
   ) {}
 
   async create(createOrderDto: CreateOrderDto) {
@@ -52,17 +82,18 @@ export class OrdersService {
     // Create per-vendor sub-orders and compute commissions
     await this.createVendorOrdersForOrder(order.id);
 
-    // Return order with vendorOrders attached
-    return this.prisma.order.findUnique({
+    const orderWithRelations = await this.prisma.order.findUnique({
       where: { id: order.id },
-      include: {
-        user: true,
-        items: { include: { product: true } },
-        vendorOrders: {
-          include: { vendor: true, items: true },
-        },
-      },
+      include: ORDER_NOTIFICATION_INCLUDE,
     });
+
+    if (orderWithRelations) {
+      this.sendOrderNotifications(orderWithRelations).catch((error) => {
+        console.error(`Failed to send order notification emails for order ${order.id}:`, error);
+      });
+    }
+
+    return orderWithRelations;
   }
 
   async findAll() {
@@ -398,5 +429,33 @@ export class OrdersService {
 
     console.log(`Sync complete! Updated ${syncedCount} vendor orders across ${orders.length} orders.`);
     return { syncedOrders: orders.length, syncedVendorOrders: syncedCount };
+  }
+
+  private async sendOrderNotifications(order: OrderWithNotifications) {
+    if (!order) return;
+
+    if (order.user?.email) {
+      try {
+        await this.emailService.sendCustomerOrderConfirmation(order as any, order.user.email);
+      } catch (error) {
+        console.error(`Failed to send customer confirmation for order ${order.id}:`, error);
+      }
+    }
+
+    if (!order.vendorOrders?.length) return;
+
+    for (const vendorOrder of order.vendorOrders) {
+      const vendorEmail = vendorOrder.vendor?.email;
+      if (!vendorEmail || !vendorOrder.items?.length) continue;
+
+      try {
+        await this.emailService.sendVendorOrderNotification(order as any, vendorEmail, vendorOrder.items as any);
+      } catch (error) {
+        console.error(
+          `Failed to send vendor notification for order ${order.id} to vendor ${vendorOrder.vendorId}:`,
+          error,
+        );
+      }
+    }
   }
 }

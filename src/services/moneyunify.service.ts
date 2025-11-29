@@ -20,29 +20,44 @@ export interface MoneyUnifyPaymentResponse {
 @Injectable()
 export class MoneyUnifyService {
   private readonly apiUrl = process.env.MONEYUNIFY_API_URL || 'https://plutex-pay-production.up.railway.app/api/v1/moneyunify';
+  private readonly initiateTimeoutMs = Number(process.env.MONEYUNIFY_INITIATE_TIMEOUT_MS || 120000); // 2 minutes by default
+  private readonly testAmount = process.env.MONEYUNIFY_TEST_AMOUNT
+    ? Number(process.env.MONEYUNIFY_TEST_AMOUNT)
+    : 1;
 
   /**
    * Initiate a payment via Money Unify
    */
   async initiatePayment(request: MoneyUnifyPaymentRequest): Promise<MoneyUnifyPaymentResponse> {
     try {
+      // Use test amount for the external MoneyUnify call while keeping the real
+      // amount in our own order records (request.amount is passed through elsewhere).
+      const amountToCharge = this.testAmount ?? request.amount;
+
       const response = await axios.post(`${this.apiUrl}/pay`, {
         phone: request.phone,
-        amount: request.amount,
+        amount: amountToCharge,
         reference: request.reference,
         description: request.description,
       }, {
         headers: {
           'Content-Type': 'application/json',
         },
-        timeout: 30000, // 30 second timeout
+        timeout: this.initiateTimeoutMs,
       });
 
       return response.data;
     } catch (error) {
       console.error('Money Unify payment initiation error:', error);
-      
+
       if (axios.isAxiosError(error)) {
+        if (error.code === 'ECONNABORTED') {
+          return {
+            success: false,
+            error: 'Payment request timed out while waiting for MoneyUnify. Please check your phone for any pending prompts and try again if necessary.',
+          };
+        }
+
         return {
           success: false,
           error: error.response?.data?.message || error.message || 'Payment initiation failed',

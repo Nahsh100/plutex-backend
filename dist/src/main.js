@@ -43,7 +43,7 @@ async function bootstrap() {
     app.use((0, express_1.urlencoded)({ extended: true, limit: '50mb' }));
     const defaultOrigins = [
         'http://localhost:3000',
-        'http://10.3.91.214:3000',
+        'http://192.168.0.178:3000',
         'https://plutex-admin-production.up.railway.app',
         'https://plutex-admin.vercel.app',
         'https://plutex.co.zm',

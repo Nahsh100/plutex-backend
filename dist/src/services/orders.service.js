@@ -18,11 +18,35 @@ const prisma_service_1 = require("../prisma/prisma.service");
 const create_order_dto_1 = require("../dto/create-order.dto");
 const websocket_service_1 = require("./websocket.service");
 const config_service_1 = require("./config.service");
+const email_service_1 = require("./email.service");
+const ORDER_NOTIFICATION_INCLUDE = {
+    user: true,
+    items: {
+        include: {
+            product: {
+                include: {
+                    vendor: true,
+                },
+            },
+        },
+    },
+    vendorOrders: {
+        include: {
+            vendor: true,
+            items: {
+                include: {
+                    product: true,
+                },
+            },
+        },
+    },
+};
 let OrdersService = class OrdersService {
-    constructor(prisma, webSocketService, configService) {
+    constructor(prisma, webSocketService, configService, emailService) {
         this.prisma = prisma;
         this.webSocketService = webSocketService;
         this.configService = configService;
+        this.emailService = emailService;
     }
     async create(createOrderDto) {
         const { items, paymentProvider, paymentReference, paymentCurrency, paymentRawData, ...orderData } = createOrderDto;
@@ -56,16 +80,16 @@ let OrdersService = class OrdersService {
             });
         }
         await this.createVendorOrdersForOrder(order.id);
-        return this.prisma.order.findUnique({
+        const orderWithRelations = await this.prisma.order.findUnique({
             where: { id: order.id },
-            include: {
-                user: true,
-                items: { include: { product: true } },
-                vendorOrders: {
-                    include: { vendor: true, items: true },
-                },
-            },
+            include: ORDER_NOTIFICATION_INCLUDE,
         });
+        if (orderWithRelations) {
+            this.sendOrderNotifications(orderWithRelations).catch((error) => {
+                console.error(`Failed to send order notification emails for order ${order.id}:`, error);
+            });
+        }
+        return orderWithRelations;
     }
     async findAll() {
         return this.prisma.order.findMany({
@@ -337,6 +361,31 @@ let OrdersService = class OrdersService {
         console.log(`Sync complete! Updated ${syncedCount} vendor orders across ${orders.length} orders.`);
         return { syncedOrders: orders.length, syncedVendorOrders: syncedCount };
     }
+    async sendOrderNotifications(order) {
+        if (!order)
+            return;
+        if (order.user?.email) {
+            try {
+                await this.emailService.sendCustomerOrderConfirmation(order, order.user.email);
+            }
+            catch (error) {
+                console.error(`Failed to send customer confirmation for order ${order.id}:`, error);
+            }
+        }
+        if (!order.vendorOrders?.length)
+            return;
+        for (const vendorOrder of order.vendorOrders) {
+            const vendorEmail = vendorOrder.vendor?.email;
+            if (!vendorEmail || !vendorOrder.items?.length)
+                continue;
+            try {
+                await this.emailService.sendVendorOrderNotification(order, vendorEmail, vendorOrder.items);
+            }
+            catch (error) {
+                console.error(`Failed to send vendor notification for order ${order.id} to vendor ${vendorOrder.vendorId}:`, error);
+            }
+        }
+    }
 };
 exports.OrdersService = OrdersService;
 exports.OrdersService = OrdersService = __decorate([
@@ -344,6 +393,7 @@ exports.OrdersService = OrdersService = __decorate([
     __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => websocket_service_1.WebSocketService))),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
         websocket_service_1.WebSocketService,
-        config_service_1.ConfigService])
+        config_service_1.ConfigService,
+        email_service_1.EmailService])
 ], OrdersService);
 //# sourceMappingURL=orders.service.js.map

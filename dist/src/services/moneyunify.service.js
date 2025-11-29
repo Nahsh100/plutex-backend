@@ -12,25 +12,36 @@ const axios_1 = require("axios");
 let MoneyUnifyService = class MoneyUnifyService {
     constructor() {
         this.apiUrl = process.env.MONEYUNIFY_API_URL || 'https://plutex-pay-production.up.railway.app/api/v1/moneyunify';
+        this.initiateTimeoutMs = Number(process.env.MONEYUNIFY_INITIATE_TIMEOUT_MS || 120000);
+        this.testAmount = process.env.MONEYUNIFY_TEST_AMOUNT
+            ? Number(process.env.MONEYUNIFY_TEST_AMOUNT)
+            : 1;
     }
     async initiatePayment(request) {
         try {
+            const amountToCharge = this.testAmount ?? request.amount;
             const response = await axios_1.default.post(`${this.apiUrl}/pay`, {
                 phone: request.phone,
-                amount: request.amount,
+                amount: amountToCharge,
                 reference: request.reference,
                 description: request.description,
             }, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                timeout: 30000,
+                timeout: this.initiateTimeoutMs,
             });
             return response.data;
         }
         catch (error) {
             console.error('Money Unify payment initiation error:', error);
             if (axios_1.default.isAxiosError(error)) {
+                if (error.code === 'ECONNABORTED') {
+                    return {
+                        success: false,
+                        error: 'Payment request timed out while waiting for MoneyUnify. Please check your phone for any pending prompts and try again if necessary.',
+                    };
+                }
                 return {
                     success: false,
                     error: error.response?.data?.message || error.message || 'Payment initiation failed',

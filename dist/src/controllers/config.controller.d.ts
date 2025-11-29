@@ -5,14 +5,20 @@ export declare class ConfigController {
     getAppConfig(): Promise<{
         commissionRate: number;
         taxRate: number;
+        defaultShippingRate: number;
+        freeShippingThreshold: number;
         updatedAt: Date;
     }>;
     updateAppConfig(body: {
         commissionRate?: number;
         taxRate?: number;
+        defaultShippingRate?: number;
+        freeShippingThreshold?: number;
     }): Promise<{
         commissionRate: number;
         taxRate: number;
+        defaultShippingRate: number;
+        freeShippingThreshold: number;
         updatedAt: Date;
     }>;
     getGlobalCommission(): Promise<{

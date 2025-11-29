@@ -92,4 +92,16 @@ export class CreateVendorDto {
   @IsOptional()
   @IsString()
   location?: string;
+
+  @IsOptional()
+  @IsNumber()
+  shippingRate?: number;
+
+  @IsOptional()
+  @IsNumber()
+  freeShippingThreshold?: number;
+
+  @IsOptional()
+  @IsString()
+  shippingNotes?: string;
 }

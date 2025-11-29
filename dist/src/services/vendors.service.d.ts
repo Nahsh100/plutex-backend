@@ -11,6 +11,7 @@ export declare class VendorsService {
             createdAt: Date;
             updatedAt: Date;
             description: string;
+            rating: number;
             price: number;
             originalPrice: number | null;
             brand: string;
@@ -25,7 +26,6 @@ export declare class VendorsService {
             dimensions: string | null;
             vendorId: string;
             categoryId: string;
-            rating: number;
             reviewCount: number;
             soldCount: number;
         }[];
@@ -43,6 +43,7 @@ export declare class VendorsService {
         createdAt: Date;
         updatedAt: Date;
         description: string | null;
+        rating: number;
         website: string | null;
         businessType: string | null;
         taxId: string | null;
@@ -52,10 +53,12 @@ export declare class VendorsService {
         documentUrl: string | null;
         internalNotes: string | null;
         isVerified: boolean;
-        rating: number;
         reviewCount: number;
         logo: string | null;
         location: string | null;
+        shippingRate: number | null;
+        freeShippingThreshold: number | null;
+        shippingNotes: string | null;
     }>;
     findAll(): Promise<({
         products: {
@@ -64,6 +67,7 @@ export declare class VendorsService {
             createdAt: Date;
             updatedAt: Date;
             description: string;
+            rating: number;
             price: number;
             originalPrice: number | null;
             brand: string;
@@ -78,7 +82,6 @@ export declare class VendorsService {
             dimensions: string | null;
             vendorId: string;
             categoryId: string;
-            rating: number;
             reviewCount: number;
             soldCount: number;
         }[];
@@ -96,6 +99,7 @@ export declare class VendorsService {
         createdAt: Date;
         updatedAt: Date;
         description: string | null;
+        rating: number;
         website: string | null;
         businessType: string | null;
         taxId: string | null;
@@ -105,10 +109,12 @@ export declare class VendorsService {
         documentUrl: string | null;
         internalNotes: string | null;
         isVerified: boolean;
-        rating: number;
         reviewCount: number;
         logo: string | null;
         location: string | null;
+        shippingRate: number | null;
+        freeShippingThreshold: number | null;
+        shippingNotes: string | null;
     })[]>;
     findOne(id: string): Promise<{
         products: {
@@ -117,6 +123,7 @@ export declare class VendorsService {
             createdAt: Date;
             updatedAt: Date;
             description: string;
+            rating: number;
             price: number;
             originalPrice: number | null;
             brand: string;
@@ -131,7 +138,6 @@ export declare class VendorsService {
             dimensions: string | null;
             vendorId: string;
             categoryId: string;
-            rating: number;
             reviewCount: number;
             soldCount: number;
         }[];
@@ -149,6 +155,7 @@ export declare class VendorsService {
         createdAt: Date;
         updatedAt: Date;
         description: string | null;
+        rating: number;
         website: string | null;
         businessType: string | null;
         taxId: string | null;
@@ -158,10 +165,12 @@ export declare class VendorsService {
         documentUrl: string | null;
         internalNotes: string | null;
         isVerified: boolean;
-        rating: number;
         reviewCount: number;
         logo: string | null;
         location: string | null;
+        shippingRate: number | null;
+        freeShippingThreshold: number | null;
+        shippingNotes: string | null;
     }>;
     findByEmail(email: string): Promise<{
         products: {
@@ -170,6 +179,7 @@ export declare class VendorsService {
             createdAt: Date;
             updatedAt: Date;
             description: string;
+            rating: number;
             price: number;
             originalPrice: number | null;
             brand: string;
@@ -184,7 +194,6 @@ export declare class VendorsService {
             dimensions: string | null;
             vendorId: string;
             categoryId: string;
-            rating: number;
             reviewCount: number;
             soldCount: number;
         }[];
@@ -202,6 +211,7 @@ export declare class VendorsService {
         createdAt: Date;
         updatedAt: Date;
         description: string | null;
+        rating: number;
         website: string | null;
         businessType: string | null;
         taxId: string | null;
@@ -211,10 +221,12 @@ export declare class VendorsService {
         documentUrl: string | null;
         internalNotes: string | null;
         isVerified: boolean;
-        rating: number;
         reviewCount: number;
         logo: string | null;
         location: string | null;
+        shippingRate: number | null;
+        freeShippingThreshold: number | null;
+        shippingNotes: string | null;
     }>;
     update(id: string, updateVendorDto: UpdateVendorDto): Promise<{
         products: {
@@ -223,6 +235,7 @@ export declare class VendorsService {
             createdAt: Date;
             updatedAt: Date;
             description: string;
+            rating: number;
             price: number;
             originalPrice: number | null;
             brand: string;
@@ -237,7 +250,6 @@ export declare class VendorsService {
             dimensions: string | null;
             vendorId: string;
             categoryId: string;
-            rating: number;
             reviewCount: number;
             soldCount: number;
         }[];
@@ -255,6 +267,7 @@ export declare class VendorsService {
         createdAt: Date;
         updatedAt: Date;
         description: string | null;
+        rating: number;
         website: string | null;
         businessType: string | null;
         taxId: string | null;
@@ -264,10 +277,12 @@ export declare class VendorsService {
         documentUrl: string | null;
         internalNotes: string | null;
         isVerified: boolean;
-        rating: number;
         reviewCount: number;
         logo: string | null;
         location: string | null;
+        shippingRate: number | null;
+        freeShippingThreshold: number | null;
+        shippingNotes: string | null;
     }>;
     remove(id: string): Promise<void>;
     getVendorsStats(): Promise<{
@@ -317,6 +332,7 @@ export declare class VendorsService {
                     createdAt: Date;
                     updatedAt: Date;
                     description: string;
+                    rating: number;
                     price: number;
                     originalPrice: number | null;
                     brand: string;
@@ -331,17 +347,16 @@ export declare class VendorsService {
                     dimensions: string | null;
                     vendorId: string;
                     categoryId: string;
-                    rating: number;
                     reviewCount: number;
                     soldCount: number;
                 };
             } & {
                 id: string;
+                productId: string;
                 price: number;
                 sku: string | null;
                 quantity: number;
                 orderId: string;
-                productId: string;
                 vendorOrderId: string | null;
             })[];
         } & {
@@ -353,14 +368,14 @@ export declare class VendorsService {
             shippingCost: number;
             subtotal: number;
             tax: number;
-            userId: string;
-            paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
             orderNumber: string;
+            paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
             paymentMethod: string;
             shippingMethod: string;
             shippingAddress: import("@prisma/client/runtime/library").JsonValue;
             trackingNumber: string | null;
             notes: string | null;
+            userId: string;
         };
         items: ({
             product: {
@@ -369,6 +384,7 @@ export declare class VendorsService {
                 createdAt: Date;
                 updatedAt: Date;
                 description: string;
+                rating: number;
                 price: number;
                 originalPrice: number | null;
                 brand: string;
@@ -383,17 +399,16 @@ export declare class VendorsService {
                 dimensions: string | null;
                 vendorId: string;
                 categoryId: string;
-                rating: number;
                 reviewCount: number;
                 soldCount: number;
             };
         } & {
             id: string;
+            productId: string;
             price: number;
             sku: string | null;
             quantity: number;
             orderId: string;
-            productId: string;
             vendorOrderId: string | null;
         })[];
     } & {
@@ -405,9 +420,9 @@ export declare class VendorsService {
         shippingCost: number;
         subtotal: number;
         tax: number;
+        paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
         vendorId: string;
         orderId: string;
-        paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
         commissionRate: number;
         commissionAmount: number;
         vendorEarnings: number;

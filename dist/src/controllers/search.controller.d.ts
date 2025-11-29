@@ -24,6 +24,7 @@ export declare class SearchController {
             createdAt: Date;
             updatedAt: Date;
             description: string;
+            rating: number;
             price: number;
             originalPrice: number | null;
             brand: string;
@@ -38,7 +39,6 @@ export declare class SearchController {
             dimensions: string | null;
             vendorId: string;
             categoryId: string;
-            rating: number;
             soldCount: number;
             fuzzyScore?: number;
         }[];
@@ -124,6 +124,7 @@ export declare class SearchController {
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
+            rating: number;
             website: string | null;
             businessType: string | null;
             taxId: string | null;
@@ -133,10 +134,12 @@ export declare class SearchController {
             documentUrl: string | null;
             internalNotes: string | null;
             isVerified: boolean;
-            rating: number;
             reviewCount: number;
             logo: string | null;
             location: string | null;
+            shippingRate: number | null;
+            freeShippingThreshold: number | null;
+            shippingNotes: string | null;
         })[];
         pagination: {
             page: number;
@@ -199,6 +202,7 @@ export declare class SearchController {
                 createdAt: Date;
                 updatedAt: Date;
                 description: string;
+                rating: number;
                 price: number;
                 originalPrice: number | null;
                 brand: string;
@@ -213,7 +217,6 @@ export declare class SearchController {
                 dimensions: string | null;
                 vendorId: string;
                 categoryId: string;
-                rating: number;
                 soldCount: number;
                 fuzzyScore?: number;
             }[];
@@ -280,6 +283,7 @@ export declare class SearchController {
                 createdAt: Date;
                 updatedAt: Date;
                 description: string | null;
+                rating: number;
                 website: string | null;
                 businessType: string | null;
                 taxId: string | null;
@@ -289,10 +293,12 @@ export declare class SearchController {
                 documentUrl: string | null;
                 internalNotes: string | null;
                 isVerified: boolean;
-                rating: number;
                 reviewCount: number;
                 logo: string | null;
                 location: string | null;
+                shippingRate: number | null;
+                freeShippingThreshold: number | null;
+                shippingNotes: string | null;
             })[];
             pagination: {
                 page: number;

@@ -24,6 +24,8 @@ let ConfigController = class ConfigController {
         return {
             commissionRate: config.commissionRate,
             taxRate: config.taxRate,
+            defaultShippingRate: config.defaultShippingRate,
+            freeShippingThreshold: config.freeShippingThreshold,
             updatedAt: config.updatedAt
         };
     }
@@ -32,6 +34,8 @@ let ConfigController = class ConfigController {
         return {
             commissionRate: saved.commissionRate,
             taxRate: saved.taxRate,
+            defaultShippingRate: saved.defaultShippingRate,
+            freeShippingThreshold: saved.freeShippingThreshold,
             updatedAt: saved.updatedAt
         };
     }

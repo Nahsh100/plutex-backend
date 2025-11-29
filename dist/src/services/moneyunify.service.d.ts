@@ -14,6 +14,8 @@ export interface MoneyUnifyPaymentResponse {
 }
 export declare class MoneyUnifyService {
     private readonly apiUrl;
+    private readonly initiateTimeoutMs;
+    private readonly testAmount;
     initiatePayment(request: MoneyUnifyPaymentRequest): Promise<MoneyUnifyPaymentResponse>;
     checkPaymentStatus(transactionId: string): Promise<MoneyUnifyPaymentResponse>;
     processWebhook(webhookData: any): {

@@ -63,6 +63,9 @@ export class CreateOrderDto {
 
   @IsObject()
   shippingAddress: {
+    fullName?: string;
+    email?: string;
+    phone?: string;
     street: string;
     city: string;
     state: string;

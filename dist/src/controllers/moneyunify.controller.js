@@ -16,6 +16,7 @@ exports.MoneyUnifyController = void 0;
 const common_1 = require("@nestjs/common");
 const moneyunify_service_1 = require("../services/moneyunify.service");
 const prisma_service_1 = require("../prisma/prisma.service");
+const payment_encryption_1 = require("../utils/payment-encryption");
 let MoneyUnifyController = class MoneyUnifyController {
     constructor(moneyUnifyService, prisma) {
         this.moneyUnifyService = moneyUnifyService;
@@ -74,6 +75,19 @@ let MoneyUnifyController = class MoneyUnifyController {
             return {
                 success: false,
                 error: error instanceof Error ? error.message : 'Payment initiation failed',
+            };
+        }
+    }
+    async initiatePaymentEncrypted(body) {
+        try {
+            const decrypted = (0, payment_encryption_1.decryptPaymentPayload)(body.payload);
+            return this.initiatePayment(decrypted);
+        }
+        catch (error) {
+            console.error('Encrypted payment initiation error:', error);
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Failed to decrypt payment payload',
             };
         }
     }
@@ -273,6 +287,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], MoneyUnifyController.prototype, "initiatePayment", null);
+__decorate([
+    (0, common_1.Post)('initiate-encrypted'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], MoneyUnifyController.prototype, "initiatePaymentEncrypted", null);
 __decorate([
     (0, common_1.Get)('status/:transactionId'),
     __param(0, (0, common_1.Param)('transactionId')),

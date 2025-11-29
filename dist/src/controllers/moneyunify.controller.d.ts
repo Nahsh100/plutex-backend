@@ -40,6 +40,23 @@ export declare class MoneyUnifyController {
         data: any;
         error?: undefined;
     }>;
+    initiatePaymentEncrypted(body: {
+        payload: string;
+    }): Promise<{
+        success: boolean;
+        error: string;
+        transactionId?: undefined;
+        status?: undefined;
+        message?: undefined;
+        data?: undefined;
+    } | {
+        success: boolean;
+        transactionId: string;
+        status: string;
+        message: string;
+        data: any;
+        error?: undefined;
+    }>;
     getPaymentStatus(transactionId: string): Promise<{
         success: boolean;
         data: import("../services/moneyunify.service").MoneyUnifyPaymentResponse;

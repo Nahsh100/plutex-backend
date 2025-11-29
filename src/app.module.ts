@@ -25,6 +25,7 @@ import { WebSocketService } from './services/websocket.service';
 import { PayoutsService } from './services/payouts.service';
 import { ConfigService } from './services/config.service';
 import { CartService } from './services/cart.service';
+import { MoneyUnifyService } from './services/moneyunify.service';
 
 // Controllers
 import { UsersController } from './controllers/users.controller';
@@ -34,6 +35,7 @@ import { OrdersController } from './controllers/orders.controller';
 import { CategoriesController } from './controllers/categories.controller';
 import { AuthController } from './controllers/auth.controller';
 import { PaymentsController } from './controllers/payments.controller';
+import { MoneyUnifyController } from './controllers/moneyunify.controller';
 import { WishlistController } from './controllers/wishlist.controller';
 import { ReviewsController } from './controllers/reviews.controller';
 import { SearchController } from './controllers/search.controller';
@@ -77,6 +79,7 @@ import { NotificationsGateway } from './gateways/notifications.gateway';
     CategoriesController,
     AuthController,
     PaymentsController,
+    MoneyUnifyController,
     WishlistController,
     ReviewsController,
     SearchController,
@@ -102,6 +105,7 @@ import { NotificationsGateway } from './gateways/notifications.gateway';
     PayoutsService,
     ConfigService,
     CartService,
+    MoneyUnifyService,
     NotificationsGateway,
     JwtStrategy,
     GoogleStrategy,

@@ -21,6 +21,7 @@ export declare class CartService {
                     createdAt: Date;
                     updatedAt: Date;
                     description: string | null;
+                    rating: number;
                     website: string | null;
                     businessType: string | null;
                     taxId: string | null;
@@ -30,10 +31,12 @@ export declare class CartService {
                     documentUrl: string | null;
                     internalNotes: string | null;
                     isVerified: boolean;
-                    rating: number;
                     reviewCount: number;
                     logo: string | null;
                     location: string | null;
+                    shippingRate: number | null;
+                    freeShippingThreshold: number | null;
+                    shippingNotes: string | null;
                 };
                 category: {
                     id: string;
@@ -55,6 +58,7 @@ export declare class CartService {
                 createdAt: Date;
                 updatedAt: Date;
                 description: string;
+                rating: number;
                 price: number;
                 originalPrice: number | null;
                 brand: string;
@@ -69,7 +73,6 @@ export declare class CartService {
                 dimensions: string | null;
                 vendorId: string;
                 categoryId: string;
-                rating: number;
                 reviewCount: number;
                 soldCount: number;
             };
@@ -77,9 +80,9 @@ export declare class CartService {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            quantity: number;
-            productId: string;
             userId: string;
+            productId: string;
+            quantity: number;
         })[];
         savedItems: ({
             product: {
@@ -97,6 +100,7 @@ export declare class CartService {
                     createdAt: Date;
                     updatedAt: Date;
                     description: string | null;
+                    rating: number;
                     website: string | null;
                     businessType: string | null;
                     taxId: string | null;
@@ -106,10 +110,12 @@ export declare class CartService {
                     documentUrl: string | null;
                     internalNotes: string | null;
                     isVerified: boolean;
-                    rating: number;
                     reviewCount: number;
                     logo: string | null;
                     location: string | null;
+                    shippingRate: number | null;
+                    freeShippingThreshold: number | null;
+                    shippingNotes: string | null;
                 };
                 category: {
                     id: string;
@@ -131,6 +137,7 @@ export declare class CartService {
                 createdAt: Date;
                 updatedAt: Date;
                 description: string;
+                rating: number;
                 price: number;
                 originalPrice: number | null;
                 brand: string;
@@ -145,15 +152,14 @@ export declare class CartService {
                 dimensions: string | null;
                 vendorId: string;
                 categoryId: string;
-                rating: number;
                 reviewCount: number;
                 soldCount: number;
             };
         } & {
             id: string;
             createdAt: Date;
-            productId: string;
             userId: string;
+            productId: string;
         })[];
     }>;
     addToCart(userId: string, addToCartDto: AddToCartDto): Promise<{
@@ -172,6 +178,7 @@ export declare class CartService {
                 createdAt: Date;
                 updatedAt: Date;
                 description: string | null;
+                rating: number;
                 website: string | null;
                 businessType: string | null;
                 taxId: string | null;
@@ -181,10 +188,12 @@ export declare class CartService {
                 documentUrl: string | null;
                 internalNotes: string | null;
                 isVerified: boolean;
-                rating: number;
                 reviewCount: number;
                 logo: string | null;
                 location: string | null;
+                shippingRate: number | null;
+                freeShippingThreshold: number | null;
+                shippingNotes: string | null;
             };
             category: {
                 id: string;
@@ -206,6 +215,7 @@ export declare class CartService {
             createdAt: Date;
             updatedAt: Date;
             description: string;
+            rating: number;
             price: number;
             originalPrice: number | null;
             brand: string;
@@ -220,7 +230,6 @@ export declare class CartService {
             dimensions: string | null;
             vendorId: string;
             categoryId: string;
-            rating: number;
             reviewCount: number;
             soldCount: number;
         };
@@ -228,9 +237,9 @@ export declare class CartService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        quantity: number;
-        productId: string;
         userId: string;
+        productId: string;
+        quantity: number;
     }>;
     updateCartItem(userId: string, itemId: string, updateCartItemDto: UpdateCartItemDto): Promise<{
         product: {
@@ -248,6 +257,7 @@ export declare class CartService {
                 createdAt: Date;
                 updatedAt: Date;
                 description: string | null;
+                rating: number;
                 website: string | null;
                 businessType: string | null;
                 taxId: string | null;
@@ -257,10 +267,12 @@ export declare class CartService {
                 documentUrl: string | null;
                 internalNotes: string | null;
                 isVerified: boolean;
-                rating: number;
                 reviewCount: number;
                 logo: string | null;
                 location: string | null;
+                shippingRate: number | null;
+                freeShippingThreshold: number | null;
+                shippingNotes: string | null;
             };
             category: {
                 id: string;
@@ -282,6 +294,7 @@ export declare class CartService {
             createdAt: Date;
             updatedAt: Date;
             description: string;
+            rating: number;
             price: number;
             originalPrice: number | null;
             brand: string;
@@ -296,7 +309,6 @@ export declare class CartService {
             dimensions: string | null;
             vendorId: string;
             categoryId: string;
-            rating: number;
             reviewCount: number;
             soldCount: number;
         };
@@ -304,9 +316,9 @@ export declare class CartService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        quantity: number;
-        productId: string;
         userId: string;
+        productId: string;
+        quantity: number;
     }>;
     removeFromCart(userId: string, itemId: string): Promise<{
         message: string;
@@ -330,6 +342,7 @@ export declare class CartService {
                 createdAt: Date;
                 updatedAt: Date;
                 description: string | null;
+                rating: number;
                 website: string | null;
                 businessType: string | null;
                 taxId: string | null;
@@ -339,10 +352,12 @@ export declare class CartService {
                 documentUrl: string | null;
                 internalNotes: string | null;
                 isVerified: boolean;
-                rating: number;
                 reviewCount: number;
                 logo: string | null;
                 location: string | null;
+                shippingRate: number | null;
+                freeShippingThreshold: number | null;
+                shippingNotes: string | null;
             };
             category: {
                 id: string;
@@ -364,6 +379,7 @@ export declare class CartService {
             createdAt: Date;
             updatedAt: Date;
             description: string;
+            rating: number;
             price: number;
             originalPrice: number | null;
             brand: string;
@@ -378,7 +394,6 @@ export declare class CartService {
             dimensions: string | null;
             vendorId: string;
             categoryId: string;
-            rating: number;
             reviewCount: number;
             soldCount: number;
         };
@@ -386,9 +401,9 @@ export declare class CartService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        quantity: number;
-        productId: string;
         userId: string;
+        productId: string;
+        quantity: number;
     }>;
     removeSaved(userId: string, productId: string): Promise<{
         message: string;

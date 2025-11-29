@@ -20,6 +20,7 @@ export declare class ProductsService {
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
+            rating: number;
             website: string | null;
             businessType: string | null;
             taxId: string | null;
@@ -29,10 +30,12 @@ export declare class ProductsService {
             documentUrl: string | null;
             internalNotes: string | null;
             isVerified: boolean;
-            rating: number;
             reviewCount: number;
             logo: string | null;
             location: string | null;
+            shippingRate: number | null;
+            freeShippingThreshold: number | null;
+            shippingNotes: string | null;
         };
         category: {
             id: string;
@@ -53,10 +56,10 @@ export declare class ProductsService {
             status: import(".prisma/client").$Enums.ReviewStatus;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            comment: string;
             rating: number;
             productId: string;
-            comment: string;
-            userId: string;
         }[];
     } & {
         id: string;
@@ -64,6 +67,7 @@ export declare class ProductsService {
         createdAt: Date;
         updatedAt: Date;
         description: string;
+        rating: number;
         price: number;
         originalPrice: number | null;
         brand: string;
@@ -78,7 +82,6 @@ export declare class ProductsService {
         dimensions: string | null;
         vendorId: string;
         categoryId: string;
-        rating: number;
         reviewCount: number;
         soldCount: number;
     }>;
@@ -97,6 +100,7 @@ export declare class ProductsService {
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
+            rating: number;
             website: string | null;
             businessType: string | null;
             taxId: string | null;
@@ -106,10 +110,12 @@ export declare class ProductsService {
             documentUrl: string | null;
             internalNotes: string | null;
             isVerified: boolean;
-            rating: number;
             reviewCount: number;
             logo: string | null;
             location: string | null;
+            shippingRate: number | null;
+            freeShippingThreshold: number | null;
+            shippingNotes: string | null;
         };
         category: {
             id: string;
@@ -130,10 +136,10 @@ export declare class ProductsService {
             status: import(".prisma/client").$Enums.ReviewStatus;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            comment: string;
             rating: number;
             productId: string;
-            comment: string;
-            userId: string;
         }[];
     } & {
         id: string;
@@ -141,6 +147,7 @@ export declare class ProductsService {
         createdAt: Date;
         updatedAt: Date;
         description: string;
+        rating: number;
         price: number;
         originalPrice: number | null;
         brand: string;
@@ -155,7 +162,6 @@ export declare class ProductsService {
         dimensions: string | null;
         vendorId: string;
         categoryId: string;
-        rating: number;
         reviewCount: number;
         soldCount: number;
     })[]>;
@@ -174,6 +180,7 @@ export declare class ProductsService {
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
+            rating: number;
             website: string | null;
             businessType: string | null;
             taxId: string | null;
@@ -183,10 +190,12 @@ export declare class ProductsService {
             documentUrl: string | null;
             internalNotes: string | null;
             isVerified: boolean;
-            rating: number;
             reviewCount: number;
             logo: string | null;
             location: string | null;
+            shippingRate: number | null;
+            freeShippingThreshold: number | null;
+            shippingNotes: string | null;
         };
         category: {
             id: string;
@@ -207,18 +216,18 @@ export declare class ProductsService {
             status: import(".prisma/client").$Enums.ReviewStatus;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            comment: string;
             rating: number;
             productId: string;
-            comment: string;
-            userId: string;
         }[];
         orderItems: {
             id: string;
+            productId: string;
             price: number;
             sku: string | null;
             quantity: number;
             orderId: string;
-            productId: string;
             vendorOrderId: string | null;
         }[];
     } & {
@@ -227,6 +236,7 @@ export declare class ProductsService {
         createdAt: Date;
         updatedAt: Date;
         description: string;
+        rating: number;
         price: number;
         originalPrice: number | null;
         brand: string;
@@ -241,7 +251,6 @@ export declare class ProductsService {
         dimensions: string | null;
         vendorId: string;
         categoryId: string;
-        rating: number;
         reviewCount: number;
         soldCount: number;
     }>;
@@ -260,6 +269,7 @@ export declare class ProductsService {
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
+            rating: number;
             website: string | null;
             businessType: string | null;
             taxId: string | null;
@@ -269,10 +279,12 @@ export declare class ProductsService {
             documentUrl: string | null;
             internalNotes: string | null;
             isVerified: boolean;
-            rating: number;
             reviewCount: number;
             logo: string | null;
             location: string | null;
+            shippingRate: number | null;
+            freeShippingThreshold: number | null;
+            shippingNotes: string | null;
         };
         category: {
             id: string;
@@ -293,10 +305,10 @@ export declare class ProductsService {
             status: import(".prisma/client").$Enums.ReviewStatus;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            comment: string;
             rating: number;
             productId: string;
-            comment: string;
-            userId: string;
         }[];
     } & {
         id: string;
@@ -304,6 +316,7 @@ export declare class ProductsService {
         createdAt: Date;
         updatedAt: Date;
         description: string;
+        rating: number;
         price: number;
         originalPrice: number | null;
         brand: string;
@@ -318,7 +331,6 @@ export declare class ProductsService {
         dimensions: string | null;
         vendorId: string;
         categoryId: string;
-        rating: number;
         reviewCount: number;
         soldCount: number;
     }>;
@@ -340,6 +352,7 @@ export declare class ProductsService {
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
+            rating: number;
             website: string | null;
             businessType: string | null;
             taxId: string | null;
@@ -349,10 +362,12 @@ export declare class ProductsService {
             documentUrl: string | null;
             internalNotes: string | null;
             isVerified: boolean;
-            rating: number;
             reviewCount: number;
             logo: string | null;
             location: string | null;
+            shippingRate: number | null;
+            freeShippingThreshold: number | null;
+            shippingNotes: string | null;
         };
         category: {
             id: string;
@@ -374,6 +389,7 @@ export declare class ProductsService {
         createdAt: Date;
         updatedAt: Date;
         description: string;
+        rating: number;
         price: number;
         originalPrice: number | null;
         brand: string;
@@ -388,7 +404,6 @@ export declare class ProductsService {
         dimensions: string | null;
         vendorId: string;
         categoryId: string;
-        rating: number;
         reviewCount: number;
         soldCount: number;
     })[]>;
@@ -408,6 +423,7 @@ export declare class ProductsService {
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
+            rating: number;
             website: string | null;
             businessType: string | null;
             taxId: string | null;
@@ -417,10 +433,12 @@ export declare class ProductsService {
             documentUrl: string | null;
             internalNotes: string | null;
             isVerified: boolean;
-            rating: number;
             reviewCount: number;
             logo: string | null;
             location: string | null;
+            shippingRate: number | null;
+            freeShippingThreshold: number | null;
+            shippingNotes: string | null;
         };
         category: {
             id: string;
@@ -438,11 +456,11 @@ export declare class ProductsService {
         };
         orderItems: {
             id: string;
+            productId: string;
             price: number;
             sku: string | null;
             quantity: number;
             orderId: string;
-            productId: string;
             vendorOrderId: string | null;
         }[];
         id: string;
@@ -450,6 +468,7 @@ export declare class ProductsService {
         createdAt: Date;
         updatedAt: Date;
         description: string;
+        rating: number;
         price: number;
         originalPrice: number | null;
         brand: string;
@@ -464,7 +483,6 @@ export declare class ProductsService {
         dimensions: string | null;
         vendorId: string;
         categoryId: string;
-        rating: number;
         reviewCount: number;
     }[]>;
     getProductsStats(): Promise<{
@@ -488,6 +506,7 @@ export declare class ProductsService {
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
+            rating: number;
             website: string | null;
             businessType: string | null;
             taxId: string | null;
@@ -497,10 +516,12 @@ export declare class ProductsService {
             documentUrl: string | null;
             internalNotes: string | null;
             isVerified: boolean;
-            rating: number;
             reviewCount: number;
             logo: string | null;
             location: string | null;
+            shippingRate: number | null;
+            freeShippingThreshold: number | null;
+            shippingNotes: string | null;
         };
         category: {
             id: string;
@@ -521,10 +542,10 @@ export declare class ProductsService {
             status: import(".prisma/client").$Enums.ReviewStatus;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            comment: string;
             rating: number;
             productId: string;
-            comment: string;
-            userId: string;
         }[];
     } & {
         id: string;
@@ -532,6 +553,7 @@ export declare class ProductsService {
         createdAt: Date;
         updatedAt: Date;
         description: string;
+        rating: number;
         price: number;
         originalPrice: number | null;
         brand: string;
@@ -546,7 +568,6 @@ export declare class ProductsService {
         dimensions: string | null;
         vendorId: string;
         categoryId: string;
-        rating: number;
         reviewCount: number;
         soldCount: number;
     })[]>;

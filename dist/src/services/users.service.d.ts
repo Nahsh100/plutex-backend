@@ -15,14 +15,14 @@ export declare class UsersService {
             shippingCost: number;
             subtotal: number;
             tax: number;
-            userId: string;
-            paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
             orderNumber: string;
+            paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
             paymentMethod: string;
             shippingMethod: string;
             shippingAddress: import("@prisma/client/runtime/library").JsonValue;
             trackingNumber: string | null;
             notes: string | null;
+            userId: string;
         }[];
     } & {
         id: string;
@@ -56,14 +56,14 @@ export declare class UsersService {
             shippingCost: number;
             subtotal: number;
             tax: number;
-            userId: string;
-            paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
             orderNumber: string;
+            paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
             paymentMethod: string;
             shippingMethod: string;
             shippingAddress: import("@prisma/client/runtime/library").JsonValue;
             trackingNumber: string | null;
             notes: string | null;
+            userId: string;
         }[];
     } & {
         id: string;
@@ -97,24 +97,24 @@ export declare class UsersService {
             shippingCost: number;
             subtotal: number;
             tax: number;
-            userId: string;
-            paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
             orderNumber: string;
+            paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
             paymentMethod: string;
             shippingMethod: string;
             shippingAddress: import("@prisma/client/runtime/library").JsonValue;
             trackingNumber: string | null;
             notes: string | null;
+            userId: string;
         }[];
         reviews: {
             id: string;
             status: import(".prisma/client").$Enums.ReviewStatus;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            comment: string;
             rating: number;
             productId: string;
-            comment: string;
-            userId: string;
         }[];
     } & {
         id: string;
@@ -170,24 +170,24 @@ export declare class UsersService {
             shippingCost: number;
             subtotal: number;
             tax: number;
-            userId: string;
-            paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
             orderNumber: string;
+            paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
             paymentMethod: string;
             shippingMethod: string;
             shippingAddress: import("@prisma/client/runtime/library").JsonValue;
             trackingNumber: string | null;
             notes: string | null;
+            userId: string;
         }[];
         reviews: {
             id: string;
             status: import(".prisma/client").$Enums.ReviewStatus;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            comment: string;
             rating: number;
             productId: string;
-            comment: string;
-            userId: string;
         }[];
     } & {
         id: string;
@@ -221,24 +221,24 @@ export declare class UsersService {
             shippingCost: number;
             subtotal: number;
             tax: number;
-            userId: string;
-            paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
             orderNumber: string;
+            paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
             paymentMethod: string;
             shippingMethod: string;
             shippingAddress: import("@prisma/client/runtime/library").JsonValue;
             trackingNumber: string | null;
             notes: string | null;
+            userId: string;
         }[];
         reviews: {
             id: string;
             status: import(".prisma/client").$Enums.ReviewStatus;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            comment: string;
             rating: number;
             productId: string;
-            comment: string;
-            userId: string;
         }[];
     } & {
         id: string;

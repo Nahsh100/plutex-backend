@@ -2,6 +2,7 @@ import { Controller, Post, Body, Get, Param, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { MoneyUnifyService } from '../services/moneyunify.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { decryptPaymentPayload } from '../utils/payment-encryption';
 
 interface CreatePaymentDto {
   phone: string;
@@ -47,7 +48,6 @@ export class MoneyUnifyController {
           error: phoneValidation.error || 'Invalid phone number',
         };
       }
-
       // Initiate payment via Money Unify
       const paymentResult = await this.moneyUnifyService.initiatePayment({
         phone: phoneValidation.formatted!,
@@ -97,6 +97,20 @@ export class MoneyUnifyController {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Payment initiation failed',
+      };
+    }
+  }
+
+  @Post('initiate-encrypted')
+  async initiatePaymentEncrypted(@Body() body: { payload: string }) {
+    try {
+      const decrypted = decryptPaymentPayload<CreatePaymentDto>(body.payload);
+      return this.initiatePayment(decrypted);
+    } catch (error) {
+      console.error('Encrypted payment initiation error:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to decrypt payment payload',
       };
     }
   }

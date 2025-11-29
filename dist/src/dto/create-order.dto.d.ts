@@ -28,6 +28,9 @@ export declare class CreateOrderDto {
     tax: number;
     total: number;
     shippingAddress: {
+        fullName?: string;
+        email?: string;
+        phone?: string;
         street: string;
         city: string;
         state: string;

@@ -12,17 +12,29 @@ export class ConfigController {
     return {
       commissionRate: config.commissionRate,
       taxRate: config.taxRate,
+      defaultShippingRate: config.defaultShippingRate,
+      freeShippingThreshold: config.freeShippingThreshold,
       updatedAt: config.updatedAt
     };
   }
 
   // Update app configuration
   @Patch()
-  async updateAppConfig(@Body() body: { commissionRate?: number; taxRate?: number }) {
+  async updateAppConfig(
+    @Body()
+    body: {
+      commissionRate?: number;
+      taxRate?: number;
+      defaultShippingRate?: number;
+      freeShippingThreshold?: number;
+    },
+  ) {
     const saved = await this.configService.updateAppConfig(body);
     return {
       commissionRate: saved.commissionRate,
       taxRate: saved.taxRate,
+      defaultShippingRate: saved.defaultShippingRate,
+      freeShippingThreshold: saved.freeShippingThreshold,
       updatedAt: saved.updatedAt
     };
   }

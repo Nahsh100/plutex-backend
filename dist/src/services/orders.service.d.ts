@@ -1,13 +1,16 @@
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from '../dto/create-order.dto';
 import { UpdateOrderDto } from '../dto/update-order.dto';
 import { WebSocketService } from './websocket.service';
 import { ConfigService } from './config.service';
+import { EmailService } from './email.service';
 export declare class OrdersService {
     private prisma;
     private webSocketService;
     private configService;
-    constructor(prisma: PrismaService, webSocketService: WebSocketService, configService: ConfigService);
+    private emailService;
+    constructor(prisma: PrismaService, webSocketService: WebSocketService, configService: ConfigService, emailService: EmailService);
     create(createOrderDto: CreateOrderDto): Promise<{
         user: {
             id: string;
@@ -31,6 +34,72 @@ export declare class OrdersService {
             updatedAt: Date;
             emailVerified: boolean;
         };
+        items: ({
+            product: {
+                vendor: {
+                    id: string;
+                    name: string;
+                    email: string;
+                    phone: string;
+                    address: string;
+                    city: string;
+                    state: string | null;
+                    zipCode: string | null;
+                    country: string;
+                    status: import(".prisma/client").$Enums.VendorStatus;
+                    createdAt: Date;
+                    updatedAt: Date;
+                    description: string | null;
+                    rating: number;
+                    website: string | null;
+                    businessType: string | null;
+                    taxId: string | null;
+                    idType: string | null;
+                    idNumber: string | null;
+                    registrationNumber: string | null;
+                    documentUrl: string | null;
+                    internalNotes: string | null;
+                    isVerified: boolean;
+                    reviewCount: number;
+                    logo: string | null;
+                    location: string | null;
+                    shippingRate: number | null;
+                    freeShippingThreshold: number | null;
+                    shippingNotes: string | null;
+                };
+            } & {
+                id: string;
+                name: string;
+                createdAt: Date;
+                updatedAt: Date;
+                description: string;
+                rating: number;
+                price: number;
+                originalPrice: number | null;
+                brand: string;
+                images: Prisma.JsonValue | null;
+                specifications: Prisma.JsonValue | null;
+                availability: import(".prisma/client").$Enums.ProductAvailability;
+                stockQuantity: number;
+                isActive: boolean;
+                isFeatured: boolean;
+                sku: string | null;
+                weight: number | null;
+                dimensions: string | null;
+                vendorId: string;
+                categoryId: string;
+                reviewCount: number;
+                soldCount: number;
+            };
+        } & {
+            id: string;
+            productId: string;
+            price: number;
+            sku: string | null;
+            quantity: number;
+            orderId: string;
+            vendorOrderId: string | null;
+        })[];
         vendorOrders: ({
             vendor: {
                 id: string;
@@ -46,6 +115,7 @@ export declare class OrdersService {
                 createdAt: Date;
                 updatedAt: Date;
                 description: string | null;
+                rating: number;
                 website: string | null;
                 businessType: string | null;
                 taxId: string | null;
@@ -55,20 +125,47 @@ export declare class OrdersService {
                 documentUrl: string | null;
                 internalNotes: string | null;
                 isVerified: boolean;
-                rating: number;
                 reviewCount: number;
                 logo: string | null;
                 location: string | null;
+                shippingRate: number | null;
+                freeShippingThreshold: number | null;
+                shippingNotes: string | null;
             };
-            items: {
+            items: ({
+                product: {
+                    id: string;
+                    name: string;
+                    createdAt: Date;
+                    updatedAt: Date;
+                    description: string;
+                    rating: number;
+                    price: number;
+                    originalPrice: number | null;
+                    brand: string;
+                    images: Prisma.JsonValue | null;
+                    specifications: Prisma.JsonValue | null;
+                    availability: import(".prisma/client").$Enums.ProductAvailability;
+                    stockQuantity: number;
+                    isActive: boolean;
+                    isFeatured: boolean;
+                    sku: string | null;
+                    weight: number | null;
+                    dimensions: string | null;
+                    vendorId: string;
+                    categoryId: string;
+                    reviewCount: number;
+                    soldCount: number;
+                };
+            } & {
                 id: string;
+                productId: string;
                 price: number;
                 sku: string | null;
                 quantity: number;
                 orderId: string;
-                productId: string;
                 vendorOrderId: string | null;
-            }[];
+            })[];
         } & {
             id: string;
             status: import(".prisma/client").$Enums.OrderStatus;
@@ -78,46 +175,12 @@ export declare class OrdersService {
             shippingCost: number;
             subtotal: number;
             tax: number;
+            paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
             vendorId: string;
             orderId: string;
-            paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
             commissionRate: number;
             commissionAmount: number;
             vendorEarnings: number;
-        })[];
-        items: ({
-            product: {
-                id: string;
-                name: string;
-                createdAt: Date;
-                updatedAt: Date;
-                description: string;
-                price: number;
-                originalPrice: number | null;
-                brand: string;
-                images: import("@prisma/client/runtime/library").JsonValue | null;
-                specifications: import("@prisma/client/runtime/library").JsonValue | null;
-                availability: import(".prisma/client").$Enums.ProductAvailability;
-                stockQuantity: number;
-                isActive: boolean;
-                isFeatured: boolean;
-                sku: string | null;
-                weight: number | null;
-                dimensions: string | null;
-                vendorId: string;
-                categoryId: string;
-                rating: number;
-                reviewCount: number;
-                soldCount: number;
-            };
-        } & {
-            id: string;
-            price: number;
-            sku: string | null;
-            quantity: number;
-            orderId: string;
-            productId: string;
-            vendorOrderId: string | null;
         })[];
     } & {
         id: string;
@@ -128,14 +191,14 @@ export declare class OrdersService {
         shippingCost: number;
         subtotal: number;
         tax: number;
-        userId: string;
-        paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
         orderNumber: string;
+        paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
         paymentMethod: string;
         shippingMethod: string;
-        shippingAddress: import("@prisma/client/runtime/library").JsonValue;
+        shippingAddress: Prisma.JsonValue;
         trackingNumber: string | null;
         notes: string | null;
+        userId: string;
     }>;
     findAll(): Promise<({
         user: {
@@ -167,11 +230,12 @@ export declare class OrdersService {
                 createdAt: Date;
                 updatedAt: Date;
                 description: string;
+                rating: number;
                 price: number;
                 originalPrice: number | null;
                 brand: string;
-                images: import("@prisma/client/runtime/library").JsonValue | null;
-                specifications: import("@prisma/client/runtime/library").JsonValue | null;
+                images: Prisma.JsonValue | null;
+                specifications: Prisma.JsonValue | null;
                 availability: import(".prisma/client").$Enums.ProductAvailability;
                 stockQuantity: number;
                 isActive: boolean;
@@ -181,17 +245,16 @@ export declare class OrdersService {
                 dimensions: string | null;
                 vendorId: string;
                 categoryId: string;
-                rating: number;
                 reviewCount: number;
                 soldCount: number;
             };
         } & {
             id: string;
+            productId: string;
             price: number;
             sku: string | null;
             quantity: number;
             orderId: string;
-            productId: string;
             vendorOrderId: string | null;
         })[];
     } & {
@@ -203,14 +266,14 @@ export declare class OrdersService {
         shippingCost: number;
         subtotal: number;
         tax: number;
-        userId: string;
-        paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
         orderNumber: string;
+        paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
         paymentMethod: string;
         shippingMethod: string;
-        shippingAddress: import("@prisma/client/runtime/library").JsonValue;
+        shippingAddress: Prisma.JsonValue;
         trackingNumber: string | null;
         notes: string | null;
+        userId: string;
     })[]>;
     findUserOrders(userId: string): Promise<({
         user: {
@@ -242,11 +305,12 @@ export declare class OrdersService {
                 createdAt: Date;
                 updatedAt: Date;
                 description: string;
+                rating: number;
                 price: number;
                 originalPrice: number | null;
                 brand: string;
-                images: import("@prisma/client/runtime/library").JsonValue | null;
-                specifications: import("@prisma/client/runtime/library").JsonValue | null;
+                images: Prisma.JsonValue | null;
+                specifications: Prisma.JsonValue | null;
                 availability: import(".prisma/client").$Enums.ProductAvailability;
                 stockQuantity: number;
                 isActive: boolean;
@@ -256,17 +320,16 @@ export declare class OrdersService {
                 dimensions: string | null;
                 vendorId: string;
                 categoryId: string;
-                rating: number;
                 reviewCount: number;
                 soldCount: number;
             };
         } & {
             id: string;
+            productId: string;
             price: number;
             sku: string | null;
             quantity: number;
             orderId: string;
-            productId: string;
             vendorOrderId: string | null;
         })[];
     } & {
@@ -278,14 +341,14 @@ export declare class OrdersService {
         shippingCost: number;
         subtotal: number;
         tax: number;
-        userId: string;
-        paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
         orderNumber: string;
+        paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
         paymentMethod: string;
         shippingMethod: string;
-        shippingAddress: import("@prisma/client/runtime/library").JsonValue;
+        shippingAddress: Prisma.JsonValue;
         trackingNumber: string | null;
         notes: string | null;
+        userId: string;
     })[]>;
     findOne(id: string): Promise<{
         user: {
@@ -317,11 +380,12 @@ export declare class OrdersService {
                 createdAt: Date;
                 updatedAt: Date;
                 description: string;
+                rating: number;
                 price: number;
                 originalPrice: number | null;
                 brand: string;
-                images: import("@prisma/client/runtime/library").JsonValue | null;
-                specifications: import("@prisma/client/runtime/library").JsonValue | null;
+                images: Prisma.JsonValue | null;
+                specifications: Prisma.JsonValue | null;
                 availability: import(".prisma/client").$Enums.ProductAvailability;
                 stockQuantity: number;
                 isActive: boolean;
@@ -331,17 +395,16 @@ export declare class OrdersService {
                 dimensions: string | null;
                 vendorId: string;
                 categoryId: string;
-                rating: number;
                 reviewCount: number;
                 soldCount: number;
             };
         } & {
             id: string;
+            productId: string;
             price: number;
             sku: string | null;
             quantity: number;
             orderId: string;
-            productId: string;
             vendorOrderId: string | null;
         })[];
     } & {
@@ -353,14 +416,14 @@ export declare class OrdersService {
         shippingCost: number;
         subtotal: number;
         tax: number;
-        userId: string;
-        paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
         orderNumber: string;
+        paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
         paymentMethod: string;
         shippingMethod: string;
-        shippingAddress: import("@prisma/client/runtime/library").JsonValue;
+        shippingAddress: Prisma.JsonValue;
         trackingNumber: string | null;
         notes: string | null;
+        userId: string;
     }>;
     update(id: string, updateOrderDto: UpdateOrderDto): Promise<{
         user: {
@@ -392,11 +455,12 @@ export declare class OrdersService {
                 createdAt: Date;
                 updatedAt: Date;
                 description: string;
+                rating: number;
                 price: number;
                 originalPrice: number | null;
                 brand: string;
-                images: import("@prisma/client/runtime/library").JsonValue | null;
-                specifications: import("@prisma/client/runtime/library").JsonValue | null;
+                images: Prisma.JsonValue | null;
+                specifications: Prisma.JsonValue | null;
                 availability: import(".prisma/client").$Enums.ProductAvailability;
                 stockQuantity: number;
                 isActive: boolean;
@@ -406,17 +470,16 @@ export declare class OrdersService {
                 dimensions: string | null;
                 vendorId: string;
                 categoryId: string;
-                rating: number;
                 reviewCount: number;
                 soldCount: number;
             };
         } & {
             id: string;
+            productId: string;
             price: number;
             sku: string | null;
             quantity: number;
             orderId: string;
-            productId: string;
             vendorOrderId: string | null;
         })[];
     } & {
@@ -428,14 +491,14 @@ export declare class OrdersService {
         shippingCost: number;
         subtotal: number;
         tax: number;
-        userId: string;
-        paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
         orderNumber: string;
+        paymentStatus: import(".prisma/client").$Enums.PaymentStatus;
         paymentMethod: string;
         shippingMethod: string;
-        shippingAddress: import("@prisma/client/runtime/library").JsonValue;
+        shippingAddress: Prisma.JsonValue;
         trackingNumber: string | null;
         notes: string | null;
+        userId: string;
     }>;
     remove(id: string): Promise<void>;
     getOrdersStats(): Promise<{
@@ -457,4 +520,5 @@ export declare class OrdersService {
         syncedOrders: number;
         syncedVendorOrders: number;
     }>;
+    private sendOrderNotifications;
 }

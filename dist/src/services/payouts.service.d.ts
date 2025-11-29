@@ -29,6 +29,7 @@ export declare class PayoutsService {
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
+            rating: number;
             website: string | null;
             businessType: string | null;
             taxId: string | null;
@@ -38,10 +39,12 @@ export declare class PayoutsService {
             documentUrl: string | null;
             internalNotes: string | null;
             isVerified: boolean;
-            rating: number;
             reviewCount: number;
             logo: string | null;
             location: string | null;
+            shippingRate: number | null;
+            freeShippingThreshold: number | null;
+            shippingNotes: string | null;
         };
     } & {
         id: string;

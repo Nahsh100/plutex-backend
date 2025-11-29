@@ -29,4 +29,7 @@ export declare class CreateVendorDto {
     reviewCount?: number;
     logo?: string;
     location?: string;
+    shippingRate?: number;
+    freeShippingThreshold?: number;
+    shippingNotes?: string;
 }

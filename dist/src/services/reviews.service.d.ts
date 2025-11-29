@@ -20,10 +20,10 @@ export declare class ReviewsService {
         status: import(".prisma/client").$Enums.ReviewStatus;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
+        comment: string;
         rating: number;
         productId: string;
-        comment: string;
-        userId: string;
     }>;
     findAll(productId?: string, status?: string, page?: number, limit?: number): Promise<{
         reviews: ({
@@ -42,10 +42,10 @@ export declare class ReviewsService {
             status: import(".prisma/client").$Enums.ReviewStatus;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            comment: string;
             rating: number;
             productId: string;
-            comment: string;
-            userId: string;
         })[];
         pagination: {
             page: number;
@@ -70,10 +70,10 @@ export declare class ReviewsService {
         status: import(".prisma/client").$Enums.ReviewStatus;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
+        comment: string;
         rating: number;
         productId: string;
-        comment: string;
-        userId: string;
     }>;
     update(id: string, updateReviewDto: UpdateReviewDto, userId: string): Promise<{
         user: {
@@ -91,10 +91,10 @@ export declare class ReviewsService {
         status: import(".prisma/client").$Enums.ReviewStatus;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
+        comment: string;
         rating: number;
         productId: string;
-        comment: string;
-        userId: string;
     }>;
     remove(id: string, userId: string): Promise<{
         message: string;
@@ -115,10 +115,10 @@ export declare class ReviewsService {
         status: import(".prisma/client").$Enums.ReviewStatus;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
+        comment: string;
         rating: number;
         productId: string;
-        comment: string;
-        userId: string;
     }>;
     getProductReviews(productId: string, page?: number, limit?: number): Promise<{
         reviews: ({
@@ -137,10 +137,10 @@ export declare class ReviewsService {
             status: import(".prisma/client").$Enums.ReviewStatus;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            comment: string;
             rating: number;
             productId: string;
-            comment: string;
-            userId: string;
         })[];
         pagination: {
             page: number;
@@ -161,10 +161,10 @@ export declare class ReviewsService {
             status: import(".prisma/client").$Enums.ReviewStatus;
             createdAt: Date;
             updatedAt: Date;
+            userId: string;
+            comment: string;
             rating: number;
             productId: string;
-            comment: string;
-            userId: string;
         })[];
         pagination: {
             page: number;
